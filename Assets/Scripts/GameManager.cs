@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public enum GamePhase { Menu, BottleSelection, Playing, GameOver }
+public enum GamePhase { Playing, GameOver }
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +11,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private BottleData[] availableBottles;
     [SerializeField] private float turnDuration = 15f;
     [SerializeField] private float shakeDuration = 3f;
+
+    [Header("Debug – Démarrage rapide")]
+    [SerializeField] private int debugBottleIndex = 0; // 0=Beer, 1=ZebiCola, 2=Champagne
 
     public float TurnDuration  => turnDuration;
     public float ShakeDuration => shakeDuration;
@@ -26,37 +28,35 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
-    // ── Phase transitions ────────────────────────────────────────────
-
-    public void GoToBottleSelection()
+    private void Start()
     {
-        SetPhase(GamePhase.BottleSelection);
+        StartGame(debugBottleIndex);
     }
 
-    /// <summary>Lance la partie avec la bouteille choisie par index.</summary>
+    /// <summary>Lance la partie avec la bouteille choisie par index (0=Beer, 1=ZebiCola, 2=Champagne).</summary>
     public void StartGame(int bottleIndex)
     {
+        bottleIndex = Mathf.Clamp(bottleIndex, 0, availableBottles.Length - 1);
         Bottle = new BottleModel();
         Bottle.Initialize(availableBottles[bottleIndex]);
         Bottle.OnExploded += HandleExplosion;
         SetPhase(GamePhase.Playing);
     }
 
-    /// <summary>Appelé par TurnManager quand la bouteille explose.</summary>
+    /// <summary>Redémarre la partie avec la même bouteille ou une nouvelle via debugBottleIndex.</summary>
+    public void RestartGame()
+    {
+        StartGame(debugBottleIndex);
+    }
+
     private void HandleExplosion()
     {
         bool holderIsPlayer = TurnManager.Instance != null &&
-                              TurnManager.Instance.CurrentHolder == 0; // 0 = P1
+                              TurnManager.Instance.CurrentHolder == 0;
         PlayerWon = !holderIsPlayer;
         SetPhase(GamePhase.GameOver);
-    }
-
-    public void ReturnToMenu()
-    {
-        SetPhase(GamePhase.Menu);
     }
 
     private void SetPhase(GamePhase phase)
