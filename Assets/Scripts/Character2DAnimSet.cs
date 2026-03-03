@@ -27,6 +27,8 @@ public class Character2DAnimSet
     public float fpsHold  = 8f;
     public float fpsShake = 12f;
 
+    public enum BottleType { Cola, Beer, Champagne }
+
     /// <summary>Retourne le tableau de frames correspondant à l'état et la phase donnés.</summary>
     public Sprite[] GetFrames(BottleState state, AnimPhase phase)
     {

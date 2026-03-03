@@ -2,75 +2,78 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Joue des animations flipbook 2D sur un SpriteRenderer ou une UI Image.
-/// Un composant par personnage. Ne connaît pas le gameplay — reçoit uniquement
-/// des ordres PlayIdle / PlayHold / PlayShake.
-/// </summary>
 public class Character2DAnimController : MonoBehaviour
 {
     [Header("Rendu — assigne l'un ou l'autre")]
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private Image          spriteImage;
+    [SerializeField] private Image spriteImage;
 
-    [Header("Animations")]
-    [SerializeField] private Character2DAnimSet animSet;
+    [Header("Animations (par bouteille)")]
+    [SerializeField] private Character2DAnimSetByBottle animByBottle;
+
+    [Header("Timing")]
+    [Tooltip("Si true, les flipbooks ignorent Time.timeScale (recommandé si ton jeu change le timeScale).")]
+    [SerializeField] private bool useRealtime = true;
 
     public BottleState CurrentState { get; private set; }
-    public AnimPhase   CurrentPhase { get; private set; }
+    public AnimPhase CurrentPhase { get; private set; }
+    public BottleType CurrentBottleType { get; private set; }
 
     private Coroutine _flipbook;
 
-    // ── API publique ──────────────────────────────────────────────────
+    // API
+    public void PlayIdle(BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Idle);
+    public void PlayHold(BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Hold);
+    public void PlayShake(BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Shake);
 
-    /// <summary>Joue l'animation Idle pour l'état de bouteille donné.</summary>
-    public void PlayIdle(BottleState state)  => Play(state, AnimPhase.Idle);
-
-    /// <summary>Joue l'animation Hold pour l'état de bouteille donné.</summary>
-    public void PlayHold(BottleState state)  => Play(state, AnimPhase.Hold);
-
-    /// <summary>Joue l'animation Shake pour l'état de bouteille donné.</summary>
-    public void PlayShake(BottleState state) => Play(state, AnimPhase.Shake);
-
-    // ── Privé ─────────────────────────────────────────────────────────
-
-    private void Play(BottleState state, AnimPhase phase)
+    private void Play(BottleType bottleType, BottleState state, AnimPhase phase)
     {
+        CurrentBottleType = bottleType;
         CurrentState = state;
         CurrentPhase = phase;
 
         if (_flipbook != null) StopCoroutine(_flipbook);
-        _flipbook = StartCoroutine(FlipbookLoop(state, phase));
+        _flipbook = StartCoroutine(FlipbookLoop(bottleType, state, phase));
     }
 
-    /// <summary>
-    /// Boucle infinie sur les frames — arrêtée uniquement par un appel à Play().
-    /// Toutes les phases bouclent : le Bridge décide quand changer d'état.
-    /// </summary>
-    private IEnumerator FlipbookLoop(BottleState state, AnimPhase phase)
+    private IEnumerator FlipbookLoop(BottleType bottleType, BottleState state, AnimPhase phase)
     {
-        Sprite[] frames = animSet?.GetFrames(state, phase);
-
-        if (frames == null || frames.Length == 0)
+        var set = animByBottle != null ? animByBottle.Get(bottleType) : null;
+        if (set == null)
         {
-            Debug.LogWarning($"[Character2DAnimController] Aucune frame pour {state}/{phase} sur {gameObject.name}.");
+            Debug.LogWarning($"[Character2DAnimController] AnimSet manquant pour {gameObject.name} ({bottleType}).");
             yield break;
         }
 
-        float interval = 1f / Mathf.Max(1f, animSet.GetFps(phase));
-        int   index    = 0;
+        Sprite[] frames = set.GetFrames(state, phase);
+
+        // Fallback : si Hold vide, on joue Idle
+        if ((frames == null || frames.Length == 0) && phase == AnimPhase.Hold)
+            frames = set.GetFrames(state, AnimPhase.Idle);
+
+        if (frames == null || frames.Length == 0)
+        {
+            Debug.LogWarning($"[Character2DAnimController] Aucune frame pour {bottleType}/{state}/{phase} sur {gameObject.name}.");
+            yield break;
+        }
+
+        float fps = set.GetFps(phase);
+        float interval = 1f / Mathf.Max(1f, fps);
+        int index = 0;
 
         while (true)
         {
             SetSprite(frames[index]);
             index = (index + 1) % frames.Length;
-            yield return new WaitForSeconds(interval);
+
+            if (useRealtime) yield return new WaitForSecondsRealtime(interval);
+            else yield return new WaitForSeconds(interval);
         }
     }
 
     private void SetSprite(Sprite sprite)
     {
-        if      (spriteRenderer != null) spriteRenderer.sprite = sprite;
-        else if (spriteImage    != null) spriteImage.sprite    = sprite;
+        if (spriteRenderer != null) spriteRenderer.sprite = sprite;
+        else if (spriteImage != null) spriteImage.sprite = sprite;
     }
 }
