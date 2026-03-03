@@ -1,34 +1,37 @@
 using UnityEngine;
 
 /// <summary>
-/// Écoute les événements de TurnManager et BottleModel, puis pilote
-/// les Character2DAnimController de chaque personnage.
-/// Les controllers ne connaissent pas le gameplay — ce bridge fait le lien.
+/// Bridge entre gameplay (TurnManager + BottleModel) et animations 2D.
+/// Les Character2DAnimController ne connaissent pas les règles : ce script pilote leurs phases.
 /// </summary>
 public class CharacterAnimationBridge : MonoBehaviour
 {
-    [Header("Controllers (index = slot joueur : 0=P1, 1=AI1, 2=AI2, 3=AI3)")]
+    [Header("Controllers (index = playerIndex : 0=P1, 1=AI1, 2=AI2, 3=AI3)")]
     [SerializeField] private Character2DAnimController[] controllers;
 
-    private BottleState  _currentState  = BottleState.Fresh;
-    private int          _currentHolder = -1;
-    private BottleModel  _subscribedBottle;
+    private BottleState _currentState = BottleState.Fresh;
+    private int _currentHolder = -1;
 
-    // ── Unity ─────────────────────────────────────────────────────────
+    private BottleModel _subscribedBottle;
 
     private void Start()
     {
-        TurnManager.Instance.OnTurnStarted    += HandleTurnStarted;
-        TurnManager.Instance.OnShakePerformed += HandleShakeStarted;
-        TurnManager.Instance.OnShakeCompleted += HandleShakeCompleted;
-        GameManager.Instance.OnPhaseChanged   += HandlePhaseChanged;
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
+            TurnManager.Instance.OnShakePerformed += HandleShakeStarted;
+            TurnManager.Instance.OnShakeCompleted += HandleShakeCompleted;
+        }
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
     }
 
     private void OnDestroy()
     {
         if (TurnManager.Instance != null)
         {
-            TurnManager.Instance.OnTurnStarted    -= HandleTurnStarted;
+            TurnManager.Instance.OnTurnStarted -= HandleTurnStarted;
             TurnManager.Instance.OnShakePerformed -= HandleShakeStarted;
             TurnManager.Instance.OnShakeCompleted -= HandleShakeCompleted;
         }
@@ -39,36 +42,51 @@ public class CharacterAnimationBridge : MonoBehaviour
         UnsubscribeBottle();
     }
 
-    // ── Handlers ──────────────────────────────────────────────────────
+    // ── Phase change ────────────────────────────────────────────────
 
     private void HandlePhaseChanged(GamePhase phase)
     {
         if (phase != GamePhase.Playing) return;
 
-        // Re-subscribe à chaque nouvelle partie (RestartGame crée un nouveau BottleModel)
         UnsubscribeBottle();
-        _subscribedBottle = GameManager.Instance.Bottle;
-        _subscribedBottle.OnStateChanged += HandleBottleStateChanged;
 
-        _currentState  = _subscribedBottle.State;
+        _subscribedBottle = GameManager.Instance.Bottle;
+
+        if (_subscribedBottle != null)
+        {
+            _subscribedBottle.OnStateChanged += HandleBottleStateChanged;
+            _currentState = _subscribedBottle.State;
+        }
+        else
+        {
+            _currentState = BottleState.Fresh;
+        }
+
         _currentHolder = -1;
+
+        if (controllers == null) return;
 
         foreach (var c in controllers)
             c?.PlayIdle(_currentState);
     }
 
+    // ── Turn events ─────────────────────────────────────────────────
+
     private void HandleTurnStarted(int holderIndex)
     {
         _currentHolder = holderIndex;
 
+        if (controllers == null) return;
+
         for (int i = 0; i < controllers.Length; i++)
         {
-            if (controllers[i] == null) continue;
+            var c = controllers[i];
+            if (c == null) continue;
 
             if (i == holderIndex)
-                controllers[i].PlayHold(_currentState);
+                c.PlayHold(_currentState);
             else
-                controllers[i].PlayIdle(_currentState);
+                c.PlayIdle(_currentState);
         }
     }
 
@@ -82,35 +100,49 @@ public class CharacterAnimationBridge : MonoBehaviour
     {
         if (!IsValidHolder()) return;
 
-        // Si c'est toujours le tour de ce joueur → Hold, sinon OnTurnStarted du suivant gère tout
         if (TurnManager.Instance.CurrentHolder == _currentHolder)
             controllers[_currentHolder].PlayHold(_currentState);
     }
+
+    // ── Bottle state ────────────────────────────────────────────────
 
     private void HandleBottleStateChanged(BottleState newState)
     {
         _currentState = newState;
 
-        // Chaque personnage garde sa phase actuelle, mais passe au nouvel état de bouteille
+        if (controllers == null) return;
+
         for (int i = 0; i < controllers.Length; i++)
         {
-            if (controllers[i] == null) continue;
+            var c = controllers[i];
+            if (c == null) continue;
 
-            switch (controllers[i].CurrentPhase)
+            switch (c.CurrentPhase)
             {
-                case AnimPhase.Idle:  controllers[i].PlayIdle(newState);  break;
-                case AnimPhase.Hold:  controllers[i].PlayHold(newState);  break;
-                case AnimPhase.Shake: controllers[i].PlayShake(newState); break;
+                case AnimPhase.Idle:
+                    c.PlayIdle(newState);
+                    break;
+
+                case AnimPhase.Hold:
+                    c.PlayHold(newState);
+                    break;
+
+                case AnimPhase.Shake:
+                    c.PlayShake(newState);
+                    break;
             }
         }
     }
 
-    // ── Utilitaires ───────────────────────────────────────────────────
+    // ── Utils ───────────────────────────────────────────────────────
 
-    private bool IsValidHolder() =>
-        _currentHolder >= 0 &&
-        _currentHolder < controllers.Length &&
-        controllers[_currentHolder] != null;
+    private bool IsValidHolder()
+    {
+        return controllers != null &&
+               _currentHolder >= 0 &&
+               _currentHolder < controllers.Length &&
+               controllers[_currentHolder] != null;
+    }
 
     private void UnsubscribeBottle()
     {

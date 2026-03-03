@@ -8,38 +8,42 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject panelHUD;
     [SerializeField] private GameObject panelGameOver;
 
+    [Header("Turn Order Panel")]
+    [SerializeField] private TextMeshProUGUI[] playerNameLabels; // 4 labels, index = position UI
+    [SerializeField] private RectTransform rouletteArrow;    // flèche à droite des labels
+
     [Header("HUD")]
-    [SerializeField] private TextMeshProUGUI[] playerNameLabels;
-    [SerializeField] private Image             bottleImage;
-    [SerializeField] private TextMeshProUGUI   timerLabel;
-    [SerializeField] private Button            shakeButton;
-    [SerializeField] private Button            passButton;
-    [SerializeField] private Image             rouletteArrow;
-    [SerializeField] private RectTransform[]   playerSlots;
+    [SerializeField] private Image bottleImage;
+    [SerializeField] private TextMeshProUGUI timerLabel;
+    [SerializeField] private Button shakeButton;
+    [SerializeField] private Button passButton;
 
     [Header("Game Over")]
     [SerializeField] private TextMeshProUGUI gameOverLabel;
-    [SerializeField] private Button          restartButton;
+    [SerializeField] private Button restartButton;
 
-    private PlayerController _playerController;
+    private static readonly string[] PlayerNames = { "P1", "AI1", "AI2", "AI3" };
+
+    private int[] _turnOrder = new int[4];
+    private int[] _uiPosByPlayerIndex = new int[4];
     private Vector3 _arrowTargetPosition;
-    private static readonly Vector3 ArrowSlotOffset = new Vector3(-40f, 0f, 0f);
+    private PlayerController _playerController;
 
     private void Start()
     {
-        _arrowTargetPosition = rouletteArrow.rectTransform.position;
-
         _playerController = FindFirstObjectByType<PlayerController>();
 
-        GameManager.Instance.OnPhaseChanged   += HandlePhaseChange;
-        TurnManager.Instance.OnShakePerformed += RefreshBottleVisual;
-        TurnManager.Instance.OnTurnStarted    += HandleTurnStarted;
+        GameManager.Instance.OnPhaseChanged += HandlePhaseChange;
+        TurnManager.Instance.OnTurnOrderBuilt += HandleTurnOrderBuilt;
+        TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
         TurnManager.Instance.OnRouletteUpdate += HandleRouletteUpdate;
+        TurnManager.Instance.OnShakePerformed += RefreshBottleVisual;
 
         shakeButton.onClick.AddListener(_playerController.OnShakeButton);
         passButton.onClick.AddListener(_playerController.OnPassTurnButton);
         restartButton.onClick.AddListener(GameManager.Instance.RestartGame);
 
+        _arrowTargetPosition = rouletteArrow.position;
         HandlePhaseChange(GameManager.Instance.CurrentPhase);
     }
 
@@ -52,12 +56,13 @@ public class UIController : MonoBehaviour
         bool isPlayerTurn = TurnManager.Instance.CurrentHolder == 0 &&
                             !TurnManager.Instance.InputBlocked;
         shakeButton.interactable = isPlayerTurn;
-        passButton.interactable  = isPlayerTurn && TurnManager.Instance.ShakesThisTurn >= 1;
+        passButton.interactable = isPlayerTurn && TurnManager.Instance.ShakesThisTurn >= 1;
 
-        rouletteArrow.rectTransform.position = Vector3.Lerp(
-            rouletteArrow.rectTransform.position,
+        // Glissement fluide de la flèche vers sa cible
+        rouletteArrow.position = Vector3.Lerp(
+            rouletteArrow.position,
             _arrowTargetPosition,
-            Time.deltaTime * 15f
+            Time.deltaTime * 12f
         );
     }
 
@@ -70,6 +75,9 @@ public class UIController : MonoBehaviour
 
         if (phase == GamePhase.Playing)
         {
+            for (int i = 0; i < playerNameLabels.Length; i++)
+                playerNameLabels[i].text = PlayerNames[i];
+
             RefreshBottleVisual();
             TurnManager.Instance.StartRoulette();
         }
@@ -80,39 +88,62 @@ public class UIController : MonoBehaviour
 
     // ── Bottle visual ────────────────────────────────────────────────
 
-    /// <summary>Met à jour le sprite de la bouteille selon son état (Fresh / Used / Crack).</summary>
+    /// <summary>Met à jour le sprite selon l'état de la bouteille.</summary>
     private void RefreshBottleVisual()
     {
         if (bottleImage == null) return;
-
         var bottle = GameManager.Instance.Bottle;
         bottleImage.sprite = bottle.State switch
         {
             BottleState.Fresh => bottle.Data.spriteNew,
-            BottleState.Used  => bottle.Data.spriteUsed,
+            BottleState.Used => bottle.Data.spriteUsed,
             BottleState.Crack => bottle.Data.spriteCrack,
-            _                 => bottle.Data.spriteNew
+            _ => bottle.Data.spriteNew
         };
+    }
+
+    // ── Turn order ───────────────────────────────────────────────────
+
+    /// <summary>Réordonne les labels selon l'ordre de tour tiré par la roulette.</summary>
+    private void HandleTurnOrderBuilt(int[] order)
+    {
+        if (order == null || order.Length < 4) return;
+        _turnOrder = order;
+
+        for (int uiPos = 0; uiPos < order.Length; uiPos++)
+        {
+            _uiPosByPlayerIndex[order[uiPos]] = uiPos;
+            playerNameLabels[uiPos].text = PlayerNames[order[uiPos]];
+        }
+
+        PointArrowTo(0);
     }
 
     // ── Turn / Roulette ──────────────────────────────────────────────
 
-    private void HandleTurnStarted(int holder)
+    private void HandleTurnStarted(int holderPlayerIndex)
     {
+        int uiPos = _uiPosByPlayerIndex[holderPlayerIndex];
+
         for (int i = 0; i < playerNameLabels.Length; i++)
         {
             var col = playerNameLabels[i].color;
-            col.a = (i == holder) ? 1f : 0.4f;
+            col.a = (i == uiPos) ? 1f : 0.4f;
             playerNameLabels[i].color = col;
         }
-        PointArrowTo(holder);
+
+        PointArrowTo(uiPos);
     }
 
-    private void HandleRouletteUpdate(int arrow) => PointArrowTo(arrow);
+    private void HandleRouletteUpdate(int arrowPlayerIndex) => PointArrowTo(arrowPlayerIndex);
 
-    private void PointArrowTo(int slotIndex)
+    /// <summary>Déplace la flèche verticalement pour s'aligner sur le label cible.</summary>
+    private void PointArrowTo(int labelIndex)
     {
-        if (playerSlots == null || slotIndex >= playerSlots.Length) return;
-        _arrowTargetPosition = playerSlots[slotIndex].position + ArrowSlotOffset;
+        if (playerNameLabels == null || labelIndex < 0 || labelIndex >= playerNameLabels.Length) return;
+
+        Vector3 target = rouletteArrow.position;
+        target.y = playerNameLabels[labelIndex].rectTransform.position.y;
+        _arrowTargetPosition = target;
     }
 }
