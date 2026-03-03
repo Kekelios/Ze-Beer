@@ -6,25 +6,36 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance { get; private set; }
 
-    private const int PlayerCount = 4;
-    private const int PlayerIndex = 0;
+    private const int PlayerCount      = 4;
+    private const int HumanPlayerIndex = 0;
 
     [Header("Roulette")]
-    [SerializeField] private float rouletteMinDuration = 1.5f;
-    [SerializeField] private float rouletteMaxDuration = 3f;
+    [SerializeField] private int   rouletteMinFullLoops = 2;
+    [SerializeField] private float rouletteIntervalMin  = 0.08f;
+    [SerializeField] private float rouletteIntervalMax  = 0.45f;
 
-    public int CurrentHolder { get; private set; }
-    public int ShakesThisTurn { get; private set; }
-    public float TimeLeft { get; private set; }
-    public bool InputBlocked { get; private set; }
+    // ── State ─────────────────────────────────────────────────────────
 
-    public event Action<int> OnTurnStarted;     // holder index
-    public event Action<int> OnRouletteUpdate;  // current arrow index
-    public event Action     OnShakePerformed;
-    public event Action     OnTurnEnded;
+    public int   CurrentHolder    { get; private set; }
+    public int   ShakesThisTurn   { get; private set; }
+    public float TimeLeft         => Mathf.Max(0f, _turnEndTime - Time.time);
+    public bool  InputBlocked     { get; private set; }
 
-    private Coroutine _turnCoroutine;
-    private Coroutine _shakeCoroutine;
+    // ── Events ────────────────────────────────────────────────────────
+
+    public event Action<int> OnTurnStarted;    // slot index du joueur actif (0–3)
+    public event Action<int> OnRouletteUpdate; // slot index surligné pendant la roulette
+    public event Action      OnShakePerformed;
+    public event Action      OnTurnEnded;
+
+    // ── Internals ─────────────────────────────────────────────────────
+
+    private readonly int[] _turnOrder = new int[PlayerCount];
+    private int   _turnOrderIndex;
+    private float _turnEndTime;
+    private bool  _turnTimerActive;
+
+    // ── Unity ─────────────────────────────────────────────────────────
 
     private void Awake()
     {
@@ -32,24 +43,34 @@ public class TurnManager : MonoBehaviour
         Instance = this;
     }
 
-    // ── Public API ───────────────────────────────────────────────────
+    private void Update()
+    {
+        if (!_turnTimerActive) return;
+        if (TimeLeft <= 0f)
+        {
+            _turnTimerActive = false;
+            HandleTimerExpired();
+        }
+    }
 
-    /// <summary>Lance la roulette puis démarre le premier tour.</summary>
+    // ── Public API ────────────────────────────────────────────────────
+
+    /// <summary>Lance la roulette initiale, puis démarre le premier tour.</summary>
     public void StartRoulette()
     {
         StartCoroutine(RouletteCoroutine());
     }
 
-    /// <summary>Demande un secouage (joueur ou IA).</summary>
+    /// <summary>Demande un secouage. Retourne false si refusé (InputBlocked ou bouteille vide).</summary>
     public bool RequestShake()
     {
         if (InputBlocked) return false;
         if (GameManager.Instance.Bottle.CurrentPV <= 0) return false;
-        _shakeCoroutine = StartCoroutine(ShakeCoroutine());
+        StartCoroutine(ShakeCoroutine());
         return true;
     }
 
-    /// <summary>Passe le tour (joueur uniquement, si >= 1 secouage).</summary>
+    /// <summary>Passe le tour. Requiert au minimum 1 secouage effectué.</summary>
     public bool RequestPassTurn()
     {
         if (InputBlocked || ShakesThisTurn < 1) return false;
@@ -57,78 +78,106 @@ public class TurnManager : MonoBehaviour
         return true;
     }
 
-    // ── Roulette ─────────────────────────────────────────────────────
+    // ── Roulette ──────────────────────────────────────────────────────
 
     private IEnumerator RouletteCoroutine()
     {
         InputBlocked = true;
-        float duration  = UnityEngine.Random.Range(rouletteMinDuration, rouletteMaxDuration);
-        float elapsed   = 0f;
-        float interval  = 0.12f;
-        int   arrow     = 0;
 
-        while (elapsed < duration)
+        // 1. Le gagnant est tiré au sort AVANT l'animation
+        int winner = UnityEngine.Random.Range(0, PlayerCount);
+
+        // 2. Calcul du nombre de pas total pour atterrir sur winner
+        //    après rouletteMinFullLoops tours complets
+        int totalSteps    = rouletteMinFullLoops * PlayerCount;
+        int posAfterLoops = totalSteps % PlayerCount;                          // toujours 0 si loops entiers
+        int stepsToWinner = (winner - posAfterLoops + PlayerCount) % PlayerCount;
+        if (stepsToWinner == 0) stepsToWinner = PlayerCount;                  // au moins 1 pas supplémentaire
+        totalSteps += stepsToWinner;
+
+        // 3. Animation : ease-out garanti, atterrissage sur winner
+        int currentArrow = 0;
+        for (int step = 0; step < totalSteps; step++)
         {
-            arrow = (arrow + 1) % PlayerCount;
-            OnRouletteUpdate?.Invoke(arrow);
+            currentArrow = (currentArrow + 1) % PlayerCount;
+            OnRouletteUpdate?.Invoke(currentArrow);
+
+            float progress = (float)step / totalSteps;
+            float interval = Mathf.Lerp(rouletteIntervalMin, rouletteIntervalMax, progress * progress);
             yield return new WaitForSeconds(interval);
-            elapsed += interval;
-            interval = Mathf.Lerp(0.12f, 0.4f, elapsed / duration); // ralentit
         }
 
-        CurrentHolder = arrow;
+        // currentArrow == winner est garanti mathématiquement
+
+        // 4. Construire l'ordre de tour (sens horaire depuis le gagnant)
+        for (int i = 0; i < PlayerCount; i++)
+            _turnOrder[i] = (winner + i) % PlayerCount;
+
+        _turnOrderIndex = 0;
+        CurrentHolder   = _turnOrder[0];
+
         InputBlocked = false;
         BeginTurn();
     }
 
-    // ── Turn loop ────────────────────────────────────────────────────
+    // ── Tour ──────────────────────────────────────────────────────────
 
     private void BeginTurn()
     {
-        ShakesThisTurn = 0;
-        TimeLeft = GameManager.Instance.TurnDuration;
+        ShakesThisTurn   = 0;
+        _turnEndTime     = Time.time + GameManager.Instance.TurnDuration;
+        _turnTimerActive = true;
+
         OnTurnStarted?.Invoke(CurrentHolder);
 
-        if (CurrentHolder != PlayerIndex)
+        if (CurrentHolder != HumanPlayerIndex)
             AIController.Instance?.StartAITurn();
-
-        _turnCoroutine = StartCoroutine(TurnTimerCoroutine());
     }
 
-    private IEnumerator TurnTimerCoroutine()
+    private void HandleTimerExpired()
     {
-        while (TimeLeft > 0f)
-        {
-            yield return null;
-            if (!InputBlocked) TimeLeft -= Time.deltaTime;
-        }
-
-        // Timer expiré
         if (ShakesThisTurn == 0)
-            yield return ShakeCoroutine(); // secouage automatique
+            StartCoroutine(ForceShakeThenEndTurn()); // secouage pénalité
         else
             EndTurn();
     }
 
+    private IEnumerator ForceShakeThenEndTurn()
+    {
+        yield return ShakeCoroutine();
+        if (GameManager.Instance.CurrentPhase == GamePhase.Playing)
+            EndTurn();
+    }
+
+    private void EndTurn()
+    {
+        _turnTimerActive = false;
+        OnTurnEnded?.Invoke();
+
+        _turnOrderIndex = (_turnOrderIndex + 1) % PlayerCount;
+        CurrentHolder   = _turnOrder[_turnOrderIndex];
+        BeginTurn();
+    }
+
+    // ── Secouage ──────────────────────────────────────────────────────
+
     private IEnumerator ShakeCoroutine()
     {
         InputBlocked = true;
+
         GameManager.Instance.Bottle.Shake();
         ShakesThisTurn++;
         OnShakePerformed?.Invoke();
 
         if (GameManager.Instance.Bottle.CurrentPV <= 0)
-            yield break; // explosion gérée par GameManager
+        {
+            InputBlocked = false;
+            yield break;
+        }
 
+        // Le timer continue dans Update() — cette attente ne le bloque plus
         yield return new WaitForSeconds(GameManager.Instance.ShakeDuration);
-        InputBlocked = false;
-    }
 
-    private void EndTurn()
-    {
-        if (_turnCoroutine != null) StopCoroutine(_turnCoroutine);
-        OnTurnEnded?.Invoke();
-        CurrentHolder = (CurrentHolder + 1) % PlayerCount;
-        BeginTurn();
+        InputBlocked = false;
     }
 }

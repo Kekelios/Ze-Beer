@@ -9,7 +9,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject panelGameOver;
 
     [Header("HUD")]
-    [SerializeField] private TextMeshProUGUI[] playerNameLabels; // P1, AI1, AI2, AI3
+    [SerializeField] private TextMeshProUGUI[] playerNameLabels;
     [SerializeField] private Image             bottleImage;
     [SerializeField] private TextMeshProUGUI   timerLabel;
     [SerializeField] private Button            shakeButton;
@@ -22,15 +22,19 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button          restartButton;
 
     private PlayerController _playerController;
+    private Vector3 _arrowTargetPosition;
+    private static readonly Vector3 ArrowSlotOffset = new Vector3(-40f, 0f, 0f);
 
     private void Start()
     {
+        _arrowTargetPosition = rouletteArrow.rectTransform.position;
+
         _playerController = FindFirstObjectByType<PlayerController>();
 
-        GameManager.Instance.OnPhaseChanged       += HandlePhaseChange;
-        TurnManager.Instance.OnShakePerformed     += RefreshBottleVisual;
-        TurnManager.Instance.OnTurnStarted        += HandleTurnStarted;
-        TurnManager.Instance.OnRouletteUpdate     += HandleRouletteUpdate;
+        GameManager.Instance.OnPhaseChanged   += HandlePhaseChange;
+        TurnManager.Instance.OnShakePerformed += RefreshBottleVisual;
+        TurnManager.Instance.OnTurnStarted    += HandleTurnStarted;
+        TurnManager.Instance.OnRouletteUpdate += HandleRouletteUpdate;
 
         shakeButton.onClick.AddListener(_playerController.OnShakeButton);
         passButton.onClick.AddListener(_playerController.OnPassTurnButton);
@@ -49,6 +53,12 @@ public class UIController : MonoBehaviour
                             !TurnManager.Instance.InputBlocked;
         shakeButton.interactable = isPlayerTurn;
         passButton.interactable  = isPlayerTurn && TurnManager.Instance.ShakesThisTurn >= 1;
+
+        rouletteArrow.rectTransform.position = Vector3.Lerp(
+            rouletteArrow.rectTransform.position,
+            _arrowTargetPosition,
+            Time.deltaTime * 15f
+        );
     }
 
     // ── Phase changes ────────────────────────────────────────────────
@@ -103,9 +113,6 @@ public class UIController : MonoBehaviour
     private void PointArrowTo(int slotIndex)
     {
         if (playerSlots == null || slotIndex >= playerSlots.Length) return;
-        Vector2 dir = (Vector2)playerSlots[slotIndex].position -
-                      (Vector2)rouletteArrow.rectTransform.position;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
-        rouletteArrow.rectTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+        _arrowTargetPosition = playerSlots[slotIndex].position + ArrowSlotOffset;
     }
 }
