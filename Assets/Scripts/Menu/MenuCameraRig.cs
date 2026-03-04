@@ -9,7 +9,6 @@ public class MenuCameraRig : MonoBehaviour
     [Header("Plan Anchors")]
     [SerializeField] private Transform plan1Anchor;
     [SerializeField] private Transform plan2Anchor;
-    [SerializeField] private Transform[] plan3Anchors; // one per bottle, same order as MenuFlowController.bottles
 
     [Header("Easing")]
     [SerializeField] private AnimationCurve easingCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
@@ -21,28 +20,18 @@ public class MenuCameraRig : MonoBehaviour
             cameraTransform = Camera.main != null ? Camera.main.transform : null;
     }
 
-    /// <summary>Moves the camera to the anchor for the given plan. Yields until complete.</summary>
-    public IEnumerator MoveToPlan(MenuPlan plan, int bottleIndex = 0)
+    /// <summary>Déplace la caméra vers l'ancre du plan cible. Yield jusqu'à la fin.</summary>
+    public IEnumerator MoveToPlan(MenuPlan plan)
     {
-        Transform target = GetAnchor(plan, bottleIndex);
+        Transform target = plan == MenuPlan.Plan1 ? plan1Anchor : plan2Anchor;
+
         if (target == null)
         {
-            Debug.LogError($"[MenuCameraRig] Missing anchor for plan {plan}, bottleIndex {bottleIndex}.");
+            Debug.LogError($"[MenuCameraRig] Ancre manquante pour {plan}.");
             yield break;
         }
-        yield return MoveToAnchor(target);
-    }
 
-    private Transform GetAnchor(MenuPlan plan, int bottleIndex)
-    {
-        return plan switch
-        {
-            MenuPlan.Plan1 => plan1Anchor,
-            MenuPlan.Plan2 => plan2Anchor,
-            MenuPlan.Plan3 when plan3Anchors != null && bottleIndex < plan3Anchors.Length
-                => plan3Anchors[bottleIndex],
-            _ => null
-        };
+        yield return MoveToAnchor(target);
     }
 
     private IEnumerator MoveToAnchor(Transform target)

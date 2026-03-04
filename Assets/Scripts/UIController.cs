@@ -38,7 +38,7 @@ public class UIController : MonoBehaviour
 
         shakeButton.onClick.AddListener(_playerController.OnShakeButton);
         passButton.onClick.AddListener(_playerController.OnPassTurnButton);
-        restartButton.onClick.AddListener(GameManager.Instance.RestartGame);
+        restartButton.onClick.AddListener(GameManager.Instance.GoToMainMenu);
 
         GameManager.Instance.OnPhaseChanged += HandlePhaseChange;
         TurnManager.Instance.OnTurnOrderBuilt += HandleTurnOrderBuilt;

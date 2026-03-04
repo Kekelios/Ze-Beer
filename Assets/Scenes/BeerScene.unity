@@ -1914,7 +1914,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 72fcee954b776d340a39553293e53f7e, type: 2}
   turnDuration: 15
   shakeDuration: 3
-  debugBottleIndex: 0
+  debugBottleIndex: 1
 --- !u!4 &1027793600
 Transform:
   m_ObjectHideFlags: 0

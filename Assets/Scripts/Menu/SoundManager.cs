@@ -1,5 +1,4 @@
-﻿// SoundManager.cs
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public enum MusicTrack { None, Ingame, Credits, Victory, GameOver }
@@ -8,7 +7,6 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
 
-    // ── Musiques ──────────────────────────────────────────────────────
     [Header("Musiques")]
     [SerializeField] private AudioClip musicIngame;
     [SerializeField] private AudioClip musicCredits;
@@ -18,7 +16,6 @@ public class SoundManager : MonoBehaviour
     [Header("Musique au démarrage")]
     [SerializeField] private MusicTrack playOnStart = MusicTrack.Ingame;
 
-    // ── SFX Bouteille ─────────────────────────────────────────────────
     [Header("SFX – Bouteille")]
     [SerializeField] private AudioClip sfxBrokenBottle;
     [SerializeField] private AudioClip sfxChampagneOpen;
@@ -26,16 +23,13 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip sfxTakeBottle;
     [SerializeField] private AudioClip sfxBottleOver;
 
-    // ── SFX UI ────────────────────────────────────────────────────────
     [Header("SFX – UI")]
     [SerializeField] private AudioClip sfxCliquer;
 
-    // ── SFX Fin de partie ─────────────────────────────────────────────
     [Header("SFX – Fin de partie")]
     [SerializeField] private AudioClip sfxHappyEnding;
     [SerializeField] private AudioClip sfxUnhappyEnding;
 
-    // ── SFX Réactions personnages ─────────────────────────────────────
     [Header("SFX – Réactions (probabilité aléatoire)")]
     [SerializeField] private AudioClip sfxHappyMen;
     [SerializeField] private AudioClip sfxAngryMen;
@@ -46,12 +40,10 @@ public class SoundManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float reactionChance = 0.4f;
 
-    // ── Volumes ───────────────────────────────────────────────────────
     [Header("Volumes")]
     [Range(0f, 1f)][SerializeField] private float musicVolume = 0.5f;
     [Range(0f, 1f)][SerializeField] private float sfxVolume = 1.0f;
 
-    // ── Sources audio ─────────────────────────────────────────────────
     private AudioSource _musicSource;
     private AudioSource _sfxSource;
 
@@ -77,35 +69,42 @@ public class SoundManager : MonoBehaviour
         {
             case MusicTrack.Ingame: PlayMusicIngame(); break;
             case MusicTrack.Credits: PlayMusicCredits(); break;
-            case MusicTrack.Victory: FadeToMusic(musicVictory); break;
-            case MusicTrack.GameOver: FadeToMusic(musicGameOver); break;
-            case MusicTrack.None: default: break;
+            case MusicTrack.Victory: FadeToMusic(musicVictory, loop: false); break;
+            case MusicTrack.GameOver: FadeToMusic(musicGameOver, loop: false); break;
         }
     }
 
     // ── API Musique ───────────────────────────────────────────────────
 
     /// <summary>Joue la musique in-game avec fondu.</summary>
-    public void PlayMusicIngame() => FadeToMusic(musicIngame);
+    public void PlayMusicIngame() => FadeToMusic(musicIngame, loop: true);
 
     /// <summary>Joue la musique des crédits avec fondu.</summary>
-    public void PlayMusicCredits() => FadeToMusic(musicCredits);
+    public void PlayMusicCredits() => FadeToMusic(musicCredits, loop: true);
 
     /// <summary>Coupe la musique avec fondu.</summary>
     public void StopMusic() => FadeToMusic(null);
 
+    /// <summary>Stoppe immédiatement tous les SFX en cours.</summary>
+    public void StopAllSFX()
+    {
+        _sfxSource.Stop();
+    }
+
     // ── API Fins de partie ────────────────────────────────────────────
 
-    /// <summary>Séquence victoire : HappyEndingSound puis Victory music.</summary>
+    /// <summary>Stoppe tout, joue HappyEndingSound puis Victory music (une fois).</summary>
     public void PlayVictorySequence()
     {
+        StopAllSFX();
         if (_endingCoroutine != null) StopCoroutine(_endingCoroutine);
         _endingCoroutine = StartCoroutine(EndingSequenceCoroutine(sfxHappyEnding, musicVictory));
     }
 
-    /// <summary>Séquence défaite : UnhappyEndingSound puis GameOver music.</summary>
+    /// <summary>Stoppe tout, joue UnhappyEndingSound puis GameOver music (une fois).</summary>
     public void PlayGameOverSequence()
     {
+        StopAllSFX();
         if (_endingCoroutine != null) StopCoroutine(_endingCoroutine);
         _endingCoroutine = StartCoroutine(EndingSequenceCoroutine(sfxUnhappyEnding, musicGameOver));
     }
@@ -115,10 +114,8 @@ public class SoundManager : MonoBehaviour
     /// <summary>Son de casse selon le type de bouteille.</summary>
     public void PlayBottleExplosion(BottleType bottleType)
     {
-        if (bottleType == BottleType.Champagne)
-            PlaySFX(sfxChampagneOpen);
-        else
-            PlaySFX(sfxBrokenBottle);
+        if (bottleType == BottleType.Champagne) PlaySFX(sfxChampagneOpen);
+        else PlaySFX(sfxBrokenBottle);
     }
 
     /// <summary>Son quand la bouteille passe à l'état Crack.</summary>
@@ -137,10 +134,7 @@ public class SoundManager : MonoBehaviour
 
     // ── API SFX Réactions ─────────────────────────────────────────────
 
-    /// <summary>
-    /// Joue une réaction aléatoire selon le personnage.
-    /// N'est pas garantie de se déclencher à chaque appel (reactionChance).
-    /// </summary>
+    /// <summary>Joue une réaction aléatoire selon le personnage (probabilité reactionChance).</summary>
     /// <param name="isFemale">True = féminin, False = masculin.</param>
     public void PlayReaction(bool isFemale)
     {
@@ -177,26 +171,30 @@ public class SoundManager : MonoBehaviour
         _sfxSource.PlayOneShot(clip, sfxVolume);
     }
 
-    private void FadeToMusic(AudioClip newClip)
+    private void FadeToMusic(AudioClip newClip, bool loop = true)
     {
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
-        _fadeCoroutine = StartCoroutine(FadeMusicCoroutine(newClip));
+        _fadeCoroutine = StartCoroutine(FadeMusicCoroutine(newClip, loop));
     }
 
     private IEnumerator EndingSequenceCoroutine(AudioClip endingStinger, AudioClip endingMusic)
     {
+        // Coupe la musique en cours immédiatement
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _musicSource.Stop();
         _musicSource.clip = null;
 
+        // Joue le stinger
         if (endingStinger != null)
         {
             _sfxSource.PlayOneShot(endingStinger, sfxVolume);
             yield return new WaitForSecondsRealtime(endingStinger.length);
         }
 
+        // Enchaîne sur la musique de fin — une seule fois (loop: false)
         if (endingMusic != null)
         {
+            _musicSource.loop = false;
             _musicSource.clip = endingMusic;
             _musicSource.volume = 0f;
             _musicSource.Play();
@@ -213,7 +211,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private IEnumerator FadeMusicCoroutine(AudioClip newClip)
+    private IEnumerator FadeMusicCoroutine(AudioClip newClip, bool loop)
     {
         if (_musicSource.isPlaying)
         {
@@ -233,6 +231,7 @@ public class SoundManager : MonoBehaviour
 
         if (newClip == null) yield break;
 
+        _musicSource.loop = loop;
         _musicSource.clip = newClip;
         _musicSource.volume = 0f;
         _musicSource.Play();

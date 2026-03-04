@@ -6,11 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 5fa23887c40f0be4cbdb8a4e6dd7f4ef
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: 5fa23887c40f0be4cbdb8a4e6dd7f4ef
+    path: Assets/Scenes/BeerScene.unity
+    guid: e712d51896fdfc34b82f85d21c6e99a9
+  - enabled: 1
+    path: Assets/Scenes/ChampagneScene.unity
+    guid: c1fd7edff285caf48b83ac68002875f9
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

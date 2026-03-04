@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,21 +6,18 @@ public class MenuUIController : MonoBehaviour
     [Header("Panels")]
     [SerializeField] private GameObject plan1Panel;
     [SerializeField] private GameObject plan2Panel;
-    [SerializeField] private GameObject plan3Panel;
 
     [Header("Plan 1")]
     [SerializeField] private Button playButton;
     [SerializeField] private Button quitButton;
 
-    [Header("Plan 2")]
+    [Header("Plan 2 – Navigation")]
     [SerializeField] private Button creditsButton;
 
-    [Header("Plan 3")]
-    [SerializeField] private Button backButton;
-    [SerializeField] private Button leftArrowButton;
-    [SerializeField] private Button rightArrowButton;
-    [SerializeField] private Button startButton;
-    [SerializeField] private TMP_Text plan3BottleLabel;
+    [Header("Plan 2 – Sélection bouteille (index = ordre dans MenuFlowController.bottles)")]
+    [SerializeField] private Button bottleButton0; // Beer
+    [SerializeField] private Button bottleButton1; // ZebiCola
+    [SerializeField] private Button bottleButton2; // Champagne
 
     private MenuFlowController _flow;
 
@@ -30,22 +26,19 @@ public class MenuUIController : MonoBehaviour
         _flow = MenuFlowController.Instance;
         if (_flow == null)
         {
-            Debug.LogError("[MenuUIController] MenuFlowController.Instance is null.");
+            Debug.LogError("[MenuUIController] MenuFlowController.Instance est null.");
             return;
         }
 
         WireButtons();
         _flow.OnPlanChanged += OnPlanChanged;
-        _flow.OnBottleSelected += _ => RefreshPlan3Label();
-
-        // Sync with the current plan (already set by MenuFlowController.Start)
         OnPlanChanged(_flow.CurrentPlan);
     }
 
     private void OnDestroy()
     {
-        if (_flow == null) return;
-        _flow.OnPlanChanged -= OnPlanChanged;
+        if (_flow != null)
+            _flow.OnPlanChanged -= OnPlanChanged;
     }
 
     private void WireButtons()
@@ -53,26 +46,15 @@ public class MenuUIController : MonoBehaviour
         playButton?.onClick.AddListener(_flow.GoToPlan2);
         quitButton?.onClick.AddListener(_flow.QuitGame);
         creditsButton?.onClick.AddListener(_flow.LoadCredits);
-        backButton?.onClick.AddListener(_flow.BackToPlan2);
-        leftArrowButton?.onClick.AddListener(() => _flow.CycleBottle(-1));
-        rightArrowButton?.onClick.AddListener(() => _flow.CycleBottle(1));
-        startButton?.onClick.AddListener(_flow.StartGame);
+
+        bottleButton0?.onClick.AddListener(() => _flow.StartGameWithBottle(0));
+        bottleButton1?.onClick.AddListener(() => _flow.StartGameWithBottle(1));
+        bottleButton2?.onClick.AddListener(() => _flow.StartGameWithBottle(2));
     }
 
     private void OnPlanChanged(MenuPlan plan)
     {
         plan1Panel?.SetActive(plan == MenuPlan.Plan1);
         plan2Panel?.SetActive(plan == MenuPlan.Plan2);
-        plan3Panel?.SetActive(plan == MenuPlan.Plan3);
-
-        if (plan == MenuPlan.Plan3)
-            RefreshPlan3Label();
-    }
-
-    /// <summary>Updates the Plan 3 label from the currently selected bottle. Call after cycling.</summary>
-    public void RefreshPlan3Label()
-    {
-        if (plan3BottleLabel == null || _flow == null) return;
-        plan3BottleLabel.SetText(_flow.Bottles[_flow.SelectedBottleIndex].GetLabel());
     }
 }

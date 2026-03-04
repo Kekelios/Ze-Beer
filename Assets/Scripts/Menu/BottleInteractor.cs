@@ -32,20 +32,13 @@ public class BottleInteractor : MonoBehaviour
         Vector2 mousePos = Mouse.current.position.ReadValue();
         Ray ray = menuCamera.ScreenPointToRay(mousePos);
 
-        // Visualise le ray dans la Scene view
         Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red);
 
-        // Test sans LayerMask pour diagnostiquer
         if (Physics.Raycast(ray, out RaycastHit hitAll, Mathf.Infinity))
-        {
             Debug.Log($"[BottleInteractor] Touche : {hitAll.collider.gameObject.name} | Layer : {LayerMask.LayerToName(hitAll.collider.gameObject.layer)} | Distance : {hitAll.distance:F2}");
-        }
         else
-        {
             Debug.Log("[BottleInteractor] Ne touche RIEN (sans mask)");
-        }
 
-        // Raycast réel avec LayerMask
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, bottleLayerMask))
         {
             BottleHighlighter highlighter = hit.collider.GetComponentInParent<BottleHighlighter>();
@@ -59,7 +52,7 @@ public class BottleInteractor : MonoBehaviour
                 }
 
                 if (Mouse.current.leftButton.wasPressedThisFrame)
-                    MenuFlowController.Instance?.SelectBottleAndGoToPlan3(highlighter.BottleIndex);
+                    MenuFlowController.Instance?.StartGameWithBottle(highlighter.BottleIndex);
 
                 return;
             }
@@ -68,10 +61,9 @@ public class BottleInteractor : MonoBehaviour
         ClearHover();
     }
 
-    /// <summary>Active ou désactive la détection hover/click sur les bouteilles.</summary>
+    /// <summary>Active ou désactive la détection hover/click sur les bouteilles 3D.</summary>
     public void SetEnabled(bool enabled)
     {
-        Debug.Log($"[BottleInteractor] SetEnabled({enabled})");
         _isEnabled = enabled;
         if (!enabled) ClearHover();
     }
