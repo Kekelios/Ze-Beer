@@ -26,6 +26,9 @@ public class SoundManager : MonoBehaviour
     [Header("SFX – UI")]
     [SerializeField] private AudioClip sfxCliquer;
 
+    [Header("SFX – Roulette")]
+    [SerializeField] private AudioClip sfxRouletteTick;
+
     [Header("SFX – Fin de partie")]
     [SerializeField] private AudioClip sfxHappyEnding;
     [SerializeField] private AudioClip sfxUnhappyEnding;
@@ -42,7 +45,7 @@ public class SoundManager : MonoBehaviour
 
     [Header("Volumes")]
     [Range(0f, 1f)][SerializeField] private float musicVolume = 0.5f;
-    [Range(0f, 1f)][SerializeField] private float sfxVolume = 1.0f;
+    [Range(0f, 1f)][SerializeField] private float sfxVolume   = 1.0f;
 
     private AudioSource _musicSource;
     private AudioSource _sfxSource;
@@ -59,17 +62,17 @@ public class SoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        _musicSource = CreateSource("MusicSource", loop: true, volume: musicVolume);
-        _sfxSource = CreateSource("SFXSource", loop: false, volume: sfxVolume);
+        _musicSource = CreateSource("MusicSource", loop: true,  volume: musicVolume);
+        _sfxSource   = CreateSource("SFXSource",   loop: false, volume: sfxVolume);
     }
 
     private void Start()
     {
         switch (playOnStart)
         {
-            case MusicTrack.Ingame: PlayMusicIngame(); break;
-            case MusicTrack.Credits: PlayMusicCredits(); break;
-            case MusicTrack.Victory: FadeToMusic(musicVictory, loop: false); break;
+            case MusicTrack.Ingame:   PlayMusicIngame();                       break;
+            case MusicTrack.Credits:  PlayMusicCredits();                      break;
+            case MusicTrack.Victory:  FadeToMusic(musicVictory,  loop: false); break;
             case MusicTrack.GameOver: FadeToMusic(musicGameOver, loop: false); break;
         }
     }
@@ -86,10 +89,7 @@ public class SoundManager : MonoBehaviour
     public void StopMusic() => FadeToMusic(null);
 
     /// <summary>Stoppe immédiatement tous les SFX en cours.</summary>
-    public void StopAllSFX()
-    {
-        _sfxSource.Stop();
-    }
+    public void StopAllSFX() => _sfxSource.Stop();
 
     // ── API Fins de partie ────────────────────────────────────────────
 
@@ -127,6 +127,11 @@ public class SoundManager : MonoBehaviour
     /// <summary>Son de passage de bouteille (fin de tour).</summary>
     public void PlayTakeBottle() => PlaySFX(sfxTakeBottle);
 
+    // ── API SFX Roulette ──────────────────────────────────────────────
+
+    /// <summary>Joue le tick sonore de la roulette à chaque déplacement de la flèche.</summary>
+    public void PlayRouletteTick() => PlaySFX(sfxRouletteTick);
+
     // ── API SFX UI ────────────────────────────────────────────────────
 
     /// <summary>Son de clic UI.</summary>
@@ -135,14 +140,13 @@ public class SoundManager : MonoBehaviour
     // ── API SFX Réactions ─────────────────────────────────────────────
 
     /// <summary>Joue une réaction aléatoire selon le personnage (probabilité reactionChance).</summary>
-    /// <param name="isFemale">True = féminin, False = masculin.</param>
     public void PlayReaction(bool isFemale)
     {
         if (Random.value > reactionChance) return;
 
         AudioClip clip = isFemale
             ? (Random.value < 0.5f ? sfxHappyWomen : sfxAngryWomen)
-            : (Random.value < 0.5f ? sfxHappyMen : sfxAngryMen);
+            : (Random.value < 0.5f ? sfxHappyMen   : sfxAngryMen);
 
         PlaySFX(clip);
     }
@@ -179,23 +183,20 @@ public class SoundManager : MonoBehaviour
 
     private IEnumerator EndingSequenceCoroutine(AudioClip endingStinger, AudioClip endingMusic)
     {
-        // Coupe la musique en cours immédiatement
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _musicSource.Stop();
         _musicSource.clip = null;
 
-        // Joue le stinger
         if (endingStinger != null)
         {
             _sfxSource.PlayOneShot(endingStinger, sfxVolume);
             yield return new WaitForSecondsRealtime(endingStinger.length);
         }
 
-        // Enchaîne sur la musique de fin — une seule fois (loop: false)
         if (endingMusic != null)
         {
-            _musicSource.loop = false;
-            _musicSource.clip = endingMusic;
+            _musicSource.loop   = false;
+            _musicSource.clip   = endingMusic;
             _musicSource.volume = 0f;
             _musicSource.Play();
 
@@ -206,7 +207,6 @@ public class SoundManager : MonoBehaviour
                 _musicSource.volume = Mathf.Lerp(0f, musicVolume, elapsed / MusicFadeDuration);
                 yield return null;
             }
-
             _musicSource.volume = musicVolume;
         }
     }
@@ -216,7 +216,7 @@ public class SoundManager : MonoBehaviour
         if (_musicSource.isPlaying)
         {
             float startVolume = _musicSource.volume;
-            float elapsed = 0f;
+            float elapsed     = 0f;
 
             while (elapsed < MusicFadeDuration)
             {
@@ -231,8 +231,8 @@ public class SoundManager : MonoBehaviour
 
         if (newClip == null) yield break;
 
-        _musicSource.loop = loop;
-        _musicSource.clip = newClip;
+        _musicSource.loop   = loop;
+        _musicSource.clip   = newClip;
         _musicSource.volume = 0f;
         _musicSource.Play();
 
@@ -243,19 +243,18 @@ public class SoundManager : MonoBehaviour
             _musicSource.volume = Mathf.Lerp(0f, musicVolume, elapsed2 / MusicFadeDuration);
             yield return null;
         }
-
         _musicSource.volume = musicVolume;
     }
 
     private AudioSource CreateSource(string sourceName, bool loop, float volume)
     {
-        var go = new GameObject(sourceName);
+        var go     = new GameObject(sourceName);
         go.transform.SetParent(transform);
-        var source = go.AddComponent<AudioSource>();
-        source.loop = loop;
-        source.volume = volume;
-        source.playOnAwake = false;
-        source.spatialBlend = 0f;
+        var source            = go.AddComponent<AudioSource>();
+        source.loop           = loop;
+        source.volume         = volume;
+        source.playOnAwake    = false;
+        source.spatialBlend   = 0f;
         return source;
     }
 }

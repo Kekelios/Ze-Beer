@@ -33,9 +33,9 @@ public class TurnManager : MonoBehaviour
     // ── Internals ─────────────────────────────────────────────────────
 
     private readonly int[] _turnOrder = new int[PlayerCount];
-    private int      _turnOrderIndex;
-    private float    _turnEndTime;
-    private bool     _turnTimerActive;
+    private int       _turnOrderIndex;
+    private float     _turnEndTime;
+    private bool      _turnTimerActive;
     private Coroutine _rouletteRoutine;
 
     // ── Unity ─────────────────────────────────────────────────────────
@@ -71,7 +71,7 @@ public class TurnManager : MonoBehaviour
     /// <summary>Demande un secouage. Retourne false si refusé.</summary>
     public bool RequestShake()
     {
-        if (InputBlocked)   return false;
+        if (InputBlocked)      return false;
         if (!_turnTimerActive) return false;
         if (GameManager.Instance.Bottle.CurrentPV <= 0) return false;
 
@@ -83,8 +83,8 @@ public class TurnManager : MonoBehaviour
     /// <summary>Passe le tour. Requiert au minimum 1 secouage effectué.</summary>
     public bool RequestPassTurn()
     {
-        if (InputBlocked)      return false;
-        if (!_turnTimerActive) return false;
+        if (InputBlocked)       return false;
+        if (!_turnTimerActive)  return false;
         if (ShakesThisTurn < 1) return false;
 
         EndTurn();
@@ -109,7 +109,6 @@ public class TurnManager : MonoBehaviour
         _turnTimerActive = false;
         InputBlocked     = true;
 
-        // Stoppe le coroutine IA qui tourne sur AIController
         AIController.Instance?.StopAITurn();
     }
 
@@ -131,6 +130,7 @@ public class TurnManager : MonoBehaviour
         {
             currentArrow = (currentArrow + 1) % PlayerCount;
             OnRouletteUpdate?.Invoke(currentArrow);
+            SoundManager.Instance?.PlayRouletteTick();
 
             float progress = (float)step / totalSteps;
             float interval = Mathf.Lerp(rouletteIntervalMin, rouletteIntervalMax, progress * progress);

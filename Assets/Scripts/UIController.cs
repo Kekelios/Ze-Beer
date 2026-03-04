@@ -158,13 +158,31 @@ public class UIController : MonoBehaviour
     private void HandleRouletteUpdate(int arrowPlayerIndex) => PointArrowTo(arrowPlayerIndex);
 
     /// <summary>Déplace la flèche verticalement pour s'aligner sur le label cible.</summary>
-    private void PointArrowTo(int labelIndex)
-    {
-        if (playerNameLabels == null || labelIndex < 0 || labelIndex >= playerNameLabels.Length) return;
-        if (rouletteArrow == null) return;
+ private void PointArrowTo(int labelIndex)
+{
+    if (playerNameLabels == null || labelIndex < 0 || labelIndex >= playerNameLabels.Length) return;
+    if (rouletteArrow == null) return;
 
-        Vector3 target = rouletteArrow.position;
-        target.y = playerNameLabels[labelIndex].rectTransform.position.y;
-        _arrowTargetPosition = target;
-    }
+    RectTransform labelRect = playerNameLabels[labelIndex].rectTransform;
+
+    // Centre mondial exact du label (indépendant du pivot)
+    Vector3[] corners = new Vector3[4];
+    labelRect.GetWorldCorners(corners);
+    float labelCenterY = (corners[0].y + corners[1].y) * 0.5f;
+
+    // Centre mondial exact de la flèche (indépendant de son pivot)
+    Vector3[] arrowCorners = new Vector3[4];
+    rouletteArrow.GetWorldCorners(arrowCorners);
+    float arrowCenterY    = (arrowCorners[0].y + arrowCorners[1].y) * 0.5f;
+    float arrowPivotY     = rouletteArrow.position.y;
+
+    // Décalage entre le pivot et le centre visuel de la flèche
+    float pivotToCenterOffset = arrowPivotY - arrowCenterY;
+
+    Vector3 target = _arrowTargetPosition;
+    target.y       = labelCenterY + pivotToCenterOffset;
+    _arrowTargetPosition = target;
+}
+
+
 }
