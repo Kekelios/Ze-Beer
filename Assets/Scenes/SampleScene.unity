@@ -470,6 +470,81 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!1 &352745713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 352745714}
+  - component: {fileID: 352745716}
+  - component: {fileID: 352745715}
+  m_Layer: 5
+  m_Name: Background
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &352745714
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352745713}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1355897466}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 65, y: 270}
+  m_SizeDelta: {x: 150, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &352745715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352745713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.64705884}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &352745716
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352745713}
+  m_CullTransparentMesh: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2272,6 +2347,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 352745714}
   - {fileID: 938575220}
   - {fileID: 2101757617}
   - {fileID: 798639089}
@@ -2281,7 +2357,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: 0}
+  m_AnchoredPosition: {x: 25, y: 100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1381628505
@@ -2866,14 +2942,14 @@ RectTransform:
   m_GameObject: {fileID: 1826279144}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 22, y: 22, z: 22}
+  m_LocalScale: {x: 16, y: 16, z: 16}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1423652517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -211, y: -513}
+  m_AnchoredPosition: {x: -800, y: -400}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1826279146
@@ -2889,18 +2965,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Character2DAnimController
   spriteRenderer: {fileID: 0}
-  spriteImage: {fileID: 0}
+  spriteImage: {fileID: 1826279147}
   animByBottle:
     cola:
-      freshIdleFrames: []
+      freshIdleFrames:
+      - {fileID: 21300000, guid: 58463d9ae30fe764dac2b36e0225e380, type: 3}
       freshHoldFrames: []
-      freshShakeFrames: []
-      usedIdleFrames: []
+      freshShakeFrames:
+      - {fileID: 21300000, guid: 4ed9aaf97efee8c4bb2aaf85b079ce6f, type: 3}
+      - {fileID: 21300000, guid: ec58830db46161d4c8dcb16898c503ad, type: 3}
+      - {fileID: 21300000, guid: fd61edf91a55e8144a4fb498588ed3e5, type: 3}
+      - {fileID: 21300000, guid: fc97c81a070568140b02c299bf40473d, type: 3}
+      usedIdleFrames:
+      - {fileID: 21300000, guid: 58463d9ae30fe764dac2b36e0225e380, type: 3}
       usedHoldFrames: []
-      usedShakeFrames: []
-      crackIdleFrames: []
+      usedShakeFrames:
+      - {fileID: 21300000, guid: 4ed9aaf97efee8c4bb2aaf85b079ce6f, type: 3}
+      - {fileID: 21300000, guid: ec58830db46161d4c8dcb16898c503ad, type: 3}
+      - {fileID: 21300000, guid: fd61edf91a55e8144a4fb498588ed3e5, type: 3}
+      - {fileID: 21300000, guid: fc97c81a070568140b02c299bf40473d, type: 3}
+      crackIdleFrames:
+      - {fileID: 21300000, guid: 58463d9ae30fe764dac2b36e0225e380, type: 3}
       crackHoldFrames: []
-      crackShakeFrames: []
+      crackShakeFrames:
+      - {fileID: 21300000, guid: 4ed9aaf97efee8c4bb2aaf85b079ce6f, type: 3}
+      - {fileID: 21300000, guid: ec58830db46161d4c8dcb16898c503ad, type: 3}
+      - {fileID: 21300000, guid: fd61edf91a55e8144a4fb498588ed3e5, type: 3}
+      - {fileID: 21300000, guid: fc97c81a070568140b02c299bf40473d, type: 3}
       fpsIdle: 8
       fpsHold: 8
       fpsShake: 12
@@ -2951,7 +3042,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 35fcd33563773a740a43f6f074523bef, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58463d9ae30fe764dac2b36e0225e380, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3080,7 +3171,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 925, y: 365}
+  m_AnchoredPosition: {x: 925, y: 450}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1903653196
@@ -3130,8 +3221,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

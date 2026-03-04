@@ -33,7 +33,12 @@ public class BottleModel
 
         var stateAfter = ComputeState();
         if (stateAfter != stateBefore)
+        {
             OnStateChanged?.Invoke(stateAfter);
+
+            if (stateAfter == BottleState.Crack)
+                SoundManager.Instance?.PlayBottleOver();
+        }
 
         if (CurrentPV <= 0)
             OnExploded?.Invoke();
@@ -42,8 +47,8 @@ public class BottleModel
     private BottleState ComputeState()
     {
         float ratio = CurrentMaxPV > 0 ? (float)CurrentPV / CurrentMaxPV : 0f;
-        if (ratio > Data.freshThreshold)  return BottleState.Fresh;
-        if (ratio > Data.crackThreshold)  return BottleState.Used;
+        if (ratio > Data.freshThreshold) return BottleState.Fresh;
+        if (ratio > Data.crackThreshold) return BottleState.Used;
         return BottleState.Crack;
     }
 }

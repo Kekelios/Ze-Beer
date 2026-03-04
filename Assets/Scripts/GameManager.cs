@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
         StartGame(debugBottleIndex);
     }
 
+    /// <summary>Démarre une partie avec la bouteille à l'index donné.</summary>
     public void StartGame(int bottleIndex)
     {
         bottleIndex = Mathf.Clamp(bottleIndex, 0, availableBottles.Length - 1);
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviour
         SetPhase(GamePhase.Playing);
     }
 
+    /// <summary>Redémarre la partie.</summary>
     public void RestartGame()
     {
         StartGame(debugBottleIndex);
@@ -67,6 +69,13 @@ public class GameManager : MonoBehaviour
                               TurnManager.Instance.CurrentHolder == 0;
 
         PlayerWon = !holderIsPlayer;
+
+        // Sons de fin de partie
+        SoundManager.Instance?.PlayBottleExplosion(Bottle.Data.bottleType);
+
+        if (PlayerWon) SoundManager.Instance?.PlayVictorySequence();
+        else SoundManager.Instance?.PlayGameOverSequence();
+
         SetPhase(GamePhase.GameOver);
     }
 

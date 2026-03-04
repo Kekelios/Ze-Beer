@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CharacterAnimationBridge : MonoBehaviour
 {
+    [Header("Controllers (index = playerIndex : 0=P1, 1=AI1, 2=AI2, 3=AI3)")]
     [SerializeField] private Character2DAnimController[] controllers;
 
     private BottleState _currentState;
@@ -12,13 +13,21 @@ public class CharacterAnimationBridge : MonoBehaviour
 
     private void Start()
     {
-        TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
-        TurnManager.Instance.OnShakePerformed += HandleShakeStarted;
-        TurnManager.Instance.OnShakeCompleted += HandleShakeCompleted;
-        GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
+            TurnManager.Instance.OnShakePerformed += HandleShakeStarted;
+            TurnManager.Instance.OnShakeCompleted += HandleShakeCompleted;
+        }
 
-        // Si la partie est déjà en Playing
-        HandlePhaseChanged(GameManager.Instance.CurrentPhase);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+
+            if (GameManager.Instance.CurrentPhase == GamePhase.Playing &&
+                GameManager.Instance.Bottle != null)
+                HandlePhaseChanged(GamePhase.Playing);
+        }
     }
 
     private void OnDestroy()
@@ -36,6 +45,8 @@ public class CharacterAnimationBridge : MonoBehaviour
         UnsubscribeBottle();
     }
 
+    // ── Phase ─────────────────────────────────────────────────────────
+
     private void HandlePhaseChanged(GamePhase phase)
     {
         if (phase != GamePhase.Playing) return;
@@ -46,7 +57,7 @@ public class CharacterAnimationBridge : MonoBehaviour
 
         if (_subscribedBottle == null || _subscribedBottle.Data == null)
         {
-            Debug.LogError("[Bridge] Bottle non initialisée.");
+            Debug.LogError("[Bridge] Bottle non initialisée — vérifie l'ordre d'exécution des scripts.");
             return;
         }
 
@@ -55,18 +66,18 @@ public class CharacterAnimationBridge : MonoBehaviour
         _currentState = _subscribedBottle.State;
         _currentType = _subscribedBottle.Data.bottleType;
 
-        Debug.Log($"[Bridge] Type actif = {_currentType}");
-
         foreach (var c in controllers)
             c?.PlayIdle(_currentType, _currentState);
     }
+
+    // ── Tour ──────────────────────────────────────────────────────────
 
     private void HandleTurnStarted(int holderIndex)
     {
         _currentHolder = holderIndex;
 
-        var bottle = GameManager.Instance.Bottle;
-        if (bottle != null && bottle.Data != null)
+        var bottle = GameManager.Instance?.Bottle;
+        if (bottle?.Data != null)
             _currentType = bottle.Data.bottleType;
 
         for (int i = 0; i < controllers.Length; i++)
@@ -74,17 +85,20 @@ public class CharacterAnimationBridge : MonoBehaviour
             var c = controllers[i];
             if (c == null) continue;
 
-            if (i == holderIndex)
-                c.PlayHold(_currentType, _currentState);
-            else
-                c.PlayIdle(_currentType, _currentState);
+            if (i == holderIndex) c.PlayHold(_currentType, _currentState);
+            else c.PlayIdle(_currentType, _currentState);
         }
     }
+
+    // ── Secouage ──────────────────────────────────────────────────────
 
     private void HandleShakeStarted()
     {
         if (!IsValidHolder()) return;
         controllers[_currentHolder].PlayShake(_currentType, _currentState);
+
+        bool isFemale = (_currentHolder == 1); // AI1 = féminin, adapte si besoin
+        SoundManager.Instance?.PlayReaction(isFemale);
     }
 
     private void HandleShakeCompleted()
@@ -94,6 +108,8 @@ public class CharacterAnimationBridge : MonoBehaviour
         if (TurnManager.Instance.CurrentHolder == _currentHolder)
             controllers[_currentHolder].PlayHold(_currentType, _currentState);
     }
+
+    // ── État bouteille ────────────────────────────────────────────────
 
     private void HandleBottleStateChanged(BottleState newState)
     {
@@ -111,6 +127,8 @@ public class CharacterAnimationBridge : MonoBehaviour
             }
         }
     }
+
+    // ── Helpers ───────────────────────────────────────────────────────
 
     private bool IsValidHolder()
     {

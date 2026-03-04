@@ -14,16 +14,14 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private float rouletteIntervalMin = 0.08f;
     [SerializeField] private float rouletteIntervalMax = 0.45f;
 
-    // ── State ─────────────────────────────────────────
+    // ── State ─────────────────────────────────────────────────────────
 
     public int CurrentHolder { get; private set; }
     public int ShakesThisTurn { get; private set; }
-
     public float TimeLeft => Mathf.Max(0f, _turnEndTime - Time.unscaledTime);
-
     public bool InputBlocked { get; private set; }
 
-    // ── Events ────────────────────────────────────────
+    // ── Events ────────────────────────────────────────────────────────
 
     public event Action<int> OnTurnStarted;
     public event Action<int> OnRouletteUpdate;
@@ -32,7 +30,7 @@ public class TurnManager : MonoBehaviour
     public event Action OnTurnEnded;
     public event Action<int[]> OnTurnOrderBuilt;
 
-    // ── Internals ─────────────────────────────────────
+    // ── Internals ─────────────────────────────────────────────────────
 
     private readonly int[] _turnOrder = new int[PlayerCount];
     private int _turnOrderIndex;
@@ -40,7 +38,7 @@ public class TurnManager : MonoBehaviour
     private bool _turnTimerActive;
     private Coroutine _rouletteRoutine;
 
-    // ── Unity ─────────────────────────────────────────
+    // ── Unity ─────────────────────────────────────────────────────────
 
     private void Awake()
     {
@@ -59,8 +57,9 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    // ── Public API ────────────────────────────────────
+    // ── Public API ────────────────────────────────────────────────────
 
+    /// <summary>Lance la roulette initiale puis démarre le premier tour.</summary>
     public void StartRoulette()
     {
         if (_rouletteRoutine != null)
@@ -69,6 +68,7 @@ public class TurnManager : MonoBehaviour
         _rouletteRoutine = StartCoroutine(RouletteCoroutine());
     }
 
+    /// <summary>Demande un secouage. Retourne false si refusé.</summary>
     public bool RequestShake()
     {
         if (InputBlocked) return false;
@@ -76,9 +76,12 @@ public class TurnManager : MonoBehaviour
         if (GameManager.Instance.Bottle.CurrentPV <= 0) return false;
 
         StartCoroutine(ShakeCoroutine());
+        SoundManager.Instance?.PlayShake();
+
         return true;
     }
 
+    /// <summary>Passe le tour. Requiert au minimum 1 secouage effectué.</summary>
     public bool RequestPassTurn()
     {
         if (InputBlocked) return false;
@@ -89,6 +92,7 @@ public class TurnManager : MonoBehaviour
         return true;
     }
 
+    /// <summary>Retourne une copie de l'ordre de tour actuel.</summary>
     public int[] GetTurnOrderCopy()
     {
         var copy = new int[PlayerCount];
@@ -96,7 +100,7 @@ public class TurnManager : MonoBehaviour
         return copy;
     }
 
-    // ── Roulette ──────────────────────────────────────
+    // ── Roulette ──────────────────────────────────────────────────────
 
     private IEnumerator RouletteCoroutine()
     {
@@ -136,7 +140,7 @@ public class TurnManager : MonoBehaviour
         BeginTurn();
     }
 
-    // ── Turn Logic ────────────────────────────────────
+    // ── Turn Logic ────────────────────────────────────────────────────
 
     private void BeginTurn()
     {
@@ -176,10 +180,12 @@ public class TurnManager : MonoBehaviour
         _turnOrderIndex = (_turnOrderIndex + 1) % PlayerCount;
         CurrentHolder = _turnOrder[_turnOrderIndex];
 
+        SoundManager.Instance?.PlayTakeBottle();
+
         BeginTurn();
     }
 
-    // ── Shake Logic ────────────────────────────────────
+    // ── Shake Logic ───────────────────────────────────────────────────
 
     private IEnumerator ShakeCoroutine()
     {
