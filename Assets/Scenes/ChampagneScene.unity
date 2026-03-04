@@ -204,8 +204,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -250}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 0, y: -75}
+  m_SizeDelta: {x: 1500, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &219476570
 MonoBehaviour:
@@ -264,7 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1045,9 +1045,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Passer
-
-'
+  m_text: Skip Turn
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1074,8 +1072,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -1144,7 +1142,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &468185503
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1914,6 +1912,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 72fcee954b776d340a39553293e53f7e, type: 2}
   turnDuration: 15
   shakeDuration: 3
+  mainMenuSceneName: MainMenu
   debugBottleIndex: 2
 --- !u!4 &1027793600
 Transform:
@@ -2234,8 +2233,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -330}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -680, y: 485}
+  m_SizeDelta: {x: 180, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1221567260
 MonoBehaviour:
@@ -2972,26 +2971,26 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 58463d9ae30fe764dac2b36e0225e380, type: 3}
       freshHoldFrames: []
       freshShakeFrames:
-      - {fileID: 21300000, guid: 4ed9aaf97efee8c4bb2aaf85b079ce6f, type: 3}
-      - {fileID: 21300000, guid: ec58830db46161d4c8dcb16898c503ad, type: 3}
-      - {fileID: 21300000, guid: fd61edf91a55e8144a4fb498588ed3e5, type: 3}
-      - {fileID: 21300000, guid: fc97c81a070568140b02c299bf40473d, type: 3}
+      - {fileID: 21300000, guid: c2bebe18531b55d498983cccf950b7a8, type: 3}
+      - {fileID: 21300000, guid: 12e8033e2b5a1234aa45d44e7d2ba58d, type: 3}
+      - {fileID: 21300000, guid: ca08fabcd3e39324597ad74455f1fd48, type: 3}
+      - {fileID: 21300000, guid: fc1a4451d606ec744aa76a3d86083014, type: 3}
       usedIdleFrames:
       - {fileID: 21300000, guid: 58463d9ae30fe764dac2b36e0225e380, type: 3}
       usedHoldFrames: []
       usedShakeFrames:
-      - {fileID: 21300000, guid: 4ed9aaf97efee8c4bb2aaf85b079ce6f, type: 3}
-      - {fileID: 21300000, guid: ec58830db46161d4c8dcb16898c503ad, type: 3}
-      - {fileID: 21300000, guid: fd61edf91a55e8144a4fb498588ed3e5, type: 3}
-      - {fileID: 21300000, guid: fc97c81a070568140b02c299bf40473d, type: 3}
+      - {fileID: 21300000, guid: 6c762266f9f1abb4baf174152c3a5981, type: 3}
+      - {fileID: 21300000, guid: 4ede3f5066d8f714680ccc9079d26233, type: 3}
+      - {fileID: 21300000, guid: 7120c421138f5104db973110c6a1c8ce, type: 3}
+      - {fileID: 21300000, guid: 82b802b8e9d752342b505901d138cbe2, type: 3}
       crackIdleFrames:
       - {fileID: 21300000, guid: 58463d9ae30fe764dac2b36e0225e380, type: 3}
       crackHoldFrames: []
       crackShakeFrames:
-      - {fileID: 21300000, guid: 4ed9aaf97efee8c4bb2aaf85b079ce6f, type: 3}
-      - {fileID: 21300000, guid: ec58830db46161d4c8dcb16898c503ad, type: 3}
-      - {fileID: 21300000, guid: fd61edf91a55e8144a4fb498588ed3e5, type: 3}
-      - {fileID: 21300000, guid: fc97c81a070568140b02c299bf40473d, type: 3}
+      - {fileID: 21300000, guid: f58f0718c73e5994f913946adbb0efc8, type: 3}
+      - {fileID: 21300000, guid: 65958275b58036a479f08a4e335b98fb, type: 3}
+      - {fileID: 21300000, guid: 5f2a6142074b2b04e92e9edd05685ac8, type: 3}
+      - {fileID: 21300000, guid: 80bf194a62580704d8ed1861f8a969d0, type: 3}
       fpsIdle: 8
       fpsHold: 8
       fpsShake: 12
@@ -3691,8 +3690,8 @@ RectTransform:
   m_GameObject: {fileID: 2104841869}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 9, y: 9, z: 9}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1423652517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3718,16 +3717,18 @@ MonoBehaviour:
   animByBottle:
     cola:
       freshIdleFrames:
-      - {fileID: 21300000, guid: 283b17d5bf21a69428912c8c4f351efd, type: 3}
+      - {fileID: 21300000, guid: 0da5b66b89e8bbe45b5f98a3989006ae, type: 3}
       freshHoldFrames: []
       freshShakeFrames:
       - {fileID: 21300000, guid: 6c25c36b4afa45d4b93683c783b95501, type: 3}
       - {fileID: 21300000, guid: 1d52ba8c032cf084ca2cd55c03fb33e1, type: 3}
       - {fileID: 21300000, guid: 7a82fc5353f31a341acf4a69a18a9922, type: 3}
-      usedIdleFrames: []
+      usedIdleFrames:
+      - {fileID: 21300000, guid: 0da5b66b89e8bbe45b5f98a3989006ae, type: 3}
       usedHoldFrames: []
       usedShakeFrames: []
-      crackIdleFrames: []
+      crackIdleFrames:
+      - {fileID: 21300000, guid: 0da5b66b89e8bbe45b5f98a3989006ae, type: 3}
       crackHoldFrames: []
       crackShakeFrames: []
       fpsIdle: 8
@@ -3792,7 +3793,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 283b17d5bf21a69428912c8c4f351efd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0da5b66b89e8bbe45b5f98a3989006ae, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
