@@ -148,7 +148,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b49b6c62eb23d043a41d0a587a93524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationBridge
-  controllers: []
+  controllers:
+  - {fileID: 1163752455}
+  - {fileID: 1826279146}
+  - {fileID: 2104515590}
+  - {fileID: 2104841871}
 --- !u!4 &44392817
 Transform:
   m_ObjectHideFlags: 0
@@ -1107,7 +1111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1835,7 +1839,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 72fcee954b776d340a39553293e53f7e, type: 2}
   turnDuration: 15
   shakeDuration: 3
-  debugBottleIndex: 0
+  debugBottleIndex: 2
 --- !u!4 &1027793600
 Transform:
   m_ObjectHideFlags: 0
@@ -2095,7 +2099,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2549,6 +2553,7 @@ MonoBehaviour:
   timerLabel: {fileID: 1903653196}
   shakeButton: {fileID: 219476570}
   passButton: {fileID: 1221567260}
+  hpDebugLabel: {fileID: 0}
   gameOverLabel: {fileID: 559272960}
   restartButton: {fileID: 2046022857}
 --- !u!1 &1577018318
@@ -2782,10 +2787,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1355897466}
-  - {fileID: 1903653195}
   - {fileID: 219476569}
   - {fileID: 1221567259}
+  - {fileID: 1355897466}
+  - {fileID: 1903653195}
   - {fileID: 476866378}
   - {fileID: 468185503}
   m_Father: {fileID: 1423652517}
@@ -2940,7 +2945,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3543,7 +3548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3618,12 +3623,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Character2DAnimController
   spriteRenderer: {fileID: 0}
-  spriteImage: {fileID: 0}
+  spriteImage: {fileID: 2104841872}
   animByBottle:
     cola:
-      freshIdleFrames: []
+      freshIdleFrames:
+      - {fileID: 21300000, guid: 283b17d5bf21a69428912c8c4f351efd, type: 3}
       freshHoldFrames: []
-      freshShakeFrames: []
+      freshShakeFrames:
+      - {fileID: 21300000, guid: 6c25c36b4afa45d4b93683c783b95501, type: 3}
+      - {fileID: 21300000, guid: 1d52ba8c032cf084ca2cd55c03fb33e1, type: 3}
+      - {fileID: 21300000, guid: 7a82fc5353f31a341acf4a69a18a9922, type: 3}
       usedIdleFrames: []
       usedHoldFrames: []
       usedShakeFrames: []
@@ -3647,15 +3656,27 @@ MonoBehaviour:
       fpsHold: 8
       fpsShake: 12
     champagne:
-      freshIdleFrames: []
+      freshIdleFrames:
+      - {fileID: 21300000, guid: 283b17d5bf21a69428912c8c4f351efd, type: 3}
       freshHoldFrames: []
-      freshShakeFrames: []
-      usedIdleFrames: []
+      freshShakeFrames:
+      - {fileID: 21300000, guid: 379f876ba2d9a204ab8fb47967617fea, type: 3}
+      - {fileID: 21300000, guid: 47879ce2c42a2af44a630efef25972fa, type: 3}
+      - {fileID: 21300000, guid: 1c2805dde98f6bb4a8a57113c614ed35, type: 3}
+      usedIdleFrames:
+      - {fileID: 21300000, guid: 283b17d5bf21a69428912c8c4f351efd, type: 3}
       usedHoldFrames: []
-      usedShakeFrames: []
-      crackIdleFrames: []
+      usedShakeFrames:
+      - {fileID: 21300000, guid: 379f876ba2d9a204ab8fb47967617fea, type: 3}
+      - {fileID: 21300000, guid: 47879ce2c42a2af44a630efef25972fa, type: 3}
+      - {fileID: 21300000, guid: 1c2805dde98f6bb4a8a57113c614ed35, type: 3}
+      crackIdleFrames:
+      - {fileID: 21300000, guid: 283b17d5bf21a69428912c8c4f351efd, type: 3}
       crackHoldFrames: []
-      crackShakeFrames: []
+      crackShakeFrames:
+      - {fileID: 21300000, guid: 379f876ba2d9a204ab8fb47967617fea, type: 3}
+      - {fileID: 21300000, guid: 47879ce2c42a2af44a630efef25972fa, type: 3}
+      - {fileID: 0}
       fpsIdle: 8
       fpsHold: 8
       fpsShake: 12
@@ -3674,7 +3695,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

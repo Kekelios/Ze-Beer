@@ -9,14 +9,17 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject panelGameOver;
 
     [Header("Turn Order Panel")]
-    [SerializeField] private TextMeshProUGUI[] playerNameLabels; // 4 labels, index = position UI
-    [SerializeField] private RectTransform rouletteArrow;    // flèche à droite des labels
+    [SerializeField] private TextMeshProUGUI[] playerNameLabels;
+    [SerializeField] private RectTransform rouletteArrow;
 
     [Header("HUD")]
     [SerializeField] private Image bottleImage;
     [SerializeField] private TextMeshProUGUI timerLabel;
     [SerializeField] private Button shakeButton;
     [SerializeField] private Button passButton;
+
+    [Header("Debug HP (optionnel — laisser vide en prod)")]
+    [SerializeField] private TextMeshProUGUI hpDebugLabel;
 
     [Header("Game Over")]
     [SerializeField] private TextMeshProUGUI gameOverLabel;
@@ -33,17 +36,20 @@ public class UIController : MonoBehaviour
     {
         _playerController = FindFirstObjectByType<PlayerController>();
 
+        shakeButton.onClick.AddListener(_playerController.OnShakeButton);
+        passButton.onClick.AddListener(_playerController.OnPassTurnButton);
+        restartButton.onClick.AddListener(GameManager.Instance.RestartGame);
+
         GameManager.Instance.OnPhaseChanged += HandlePhaseChange;
         TurnManager.Instance.OnTurnOrderBuilt += HandleTurnOrderBuilt;
         TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
         TurnManager.Instance.OnRouletteUpdate += HandleRouletteUpdate;
         TurnManager.Instance.OnShakePerformed += RefreshBottleVisual;
+        TurnManager.Instance.OnShakePerformed += RefreshHpDebug;
 
-        shakeButton.onClick.AddListener(_playerController.OnShakeButton);
-        passButton.onClick.AddListener(_playerController.OnPassTurnButton);
-        restartButton.onClick.AddListener(GameManager.Instance.RestartGame);
+        if (rouletteArrow != null)
+            _arrowTargetPosition = rouletteArrow.position;
 
-        _arrowTargetPosition = rouletteArrow.position;
         HandlePhaseChange(GameManager.Instance.CurrentPhase);
     }
 
@@ -58,15 +64,17 @@ public class UIController : MonoBehaviour
         shakeButton.interactable = isPlayerTurn;
         passButton.interactable = isPlayerTurn && TurnManager.Instance.ShakesThisTurn >= 1;
 
-        // Glissement fluide de la flèche vers sa cible
-        rouletteArrow.position = Vector3.Lerp(
-            rouletteArrow.position,
-            _arrowTargetPosition,
-            Time.deltaTime * 12f
-        );
+        if (rouletteArrow != null)
+        {
+            rouletteArrow.position = Vector3.Lerp(
+                rouletteArrow.position,
+                _arrowTargetPosition,
+                Time.deltaTime * 12f
+            );
+        }
     }
 
-    // ── Phase changes ────────────────────────────────────────────────
+    // ── Phase changes ─────────────────────────────────────────────────
 
     private void HandlePhaseChange(GamePhase phase)
     {
@@ -79,6 +87,7 @@ public class UIController : MonoBehaviour
                 playerNameLabels[i].text = PlayerNames[i];
 
             RefreshBottleVisual();
+            RefreshHpDebug();
             TurnManager.Instance.StartRoulette();
         }
 
@@ -86,7 +95,7 @@ public class UIController : MonoBehaviour
             gameOverLabel.text = GameManager.Instance.PlayerWon ? "VICTOIRE !" : "DÉFAITE...";
     }
 
-    // ── Bottle visual ────────────────────────────────────────────────
+    // ── Bottle visual ─────────────────────────────────────────────────
 
     /// <summary>Met à jour le sprite selon l'état de la bouteille.</summary>
     private void RefreshBottleVisual()
@@ -102,7 +111,18 @@ public class UIController : MonoBehaviour
         };
     }
 
-    // ── Turn order ───────────────────────────────────────────────────
+    /// <summary>Affiche les PV perdus pour le debug (masqué si hpDebugLabel non assigné).</summary>
+    private void RefreshHpDebug()
+    {
+        if (hpDebugLabel == null) return;
+        var bottle = GameManager.Instance.Bottle;
+        if (bottle == null) return;
+
+        int lost = bottle.CurrentMaxPV - bottle.CurrentPV;
+        hpDebugLabel.text = $"PV perdus : {lost} / {bottle.CurrentMaxPV}";
+    }
+
+    // ── Turn order ────────────────────────────────────────────────────
 
     /// <summary>Réordonne les labels selon l'ordre de tour tiré par la roulette.</summary>
     private void HandleTurnOrderBuilt(int[] order)
@@ -119,7 +139,7 @@ public class UIController : MonoBehaviour
         PointArrowTo(0);
     }
 
-    // ── Turn / Roulette ──────────────────────────────────────────────
+    // ── Turn / Roulette ───────────────────────────────────────────────
 
     private void HandleTurnStarted(int holderPlayerIndex)
     {
@@ -141,6 +161,7 @@ public class UIController : MonoBehaviour
     private void PointArrowTo(int labelIndex)
     {
         if (playerNameLabels == null || labelIndex < 0 || labelIndex >= playerNameLabels.Length) return;
+        if (rouletteArrow == null) return;
 
         Vector3 target = rouletteArrow.position;
         target.y = playerNameLabels[labelIndex].rectTransform.position.y;

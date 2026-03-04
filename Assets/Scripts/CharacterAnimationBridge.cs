@@ -2,26 +2,23 @@ using UnityEngine;
 
 public class CharacterAnimationBridge : MonoBehaviour
 {
-    [Header("Controllers (index = playerIndex : 0=P1, 1=AI1, 2=AI2, 3=AI3)")]
     [SerializeField] private Character2DAnimController[] controllers;
 
-    private BottleState _currentState = BottleState.Fresh;
-    private BottleType _currentType = BottleType.Cola;
+    private BottleState _currentState;
+    private BottleType _currentType;
     private int _currentHolder = -1;
 
     private BottleModel _subscribedBottle;
 
     private void Start()
     {
-        if (TurnManager.Instance != null)
-        {
-            TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
-            TurnManager.Instance.OnShakePerformed += HandleShakeStarted;
-            TurnManager.Instance.OnShakeCompleted += HandleShakeCompleted;
-        }
+        TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
+        TurnManager.Instance.OnShakePerformed += HandleShakeStarted;
+        TurnManager.Instance.OnShakeCompleted += HandleShakeCompleted;
+        GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
 
-        if (GameManager.Instance != null)
-            GameManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+        // Si la partie est déjà en Playing
+        HandlePhaseChanged(GameManager.Instance.CurrentPhase);
     }
 
     private void OnDestroy()
@@ -44,21 +41,21 @@ public class CharacterAnimationBridge : MonoBehaviour
         if (phase != GamePhase.Playing) return;
 
         UnsubscribeBottle();
+
         _subscribedBottle = GameManager.Instance.Bottle;
 
-        if (_subscribedBottle != null && _subscribedBottle.Data != null)
+        if (_subscribedBottle == null || _subscribedBottle.Data == null)
         {
-            _subscribedBottle.OnStateChanged += HandleBottleStateChanged;
-            _currentState = _subscribedBottle.State;
-            _currentType = _subscribedBottle.Data.bottleType;
-        }
-        else
-        {
-            _currentState = BottleState.Fresh;
-            _currentType = BottleType.Cola;
+            Debug.LogError("[Bridge] Bottle non initialisée.");
+            return;
         }
 
-        _currentHolder = -1;
+        _subscribedBottle.OnStateChanged += HandleBottleStateChanged;
+
+        _currentState = _subscribedBottle.State;
+        _currentType = _subscribedBottle.Data.bottleType;
+
+        Debug.Log($"[Bridge] Type actif = {_currentType}");
 
         foreach (var c in controllers)
             c?.PlayIdle(_currentType, _currentState);
@@ -68,7 +65,6 @@ public class CharacterAnimationBridge : MonoBehaviour
     {
         _currentHolder = holderIndex;
 
-        // si on a changé de bouteille (rare), on refresh le type
         var bottle = GameManager.Instance.Bottle;
         if (bottle != null && bottle.Data != null)
             _currentType = bottle.Data.bottleType;
@@ -78,8 +74,10 @@ public class CharacterAnimationBridge : MonoBehaviour
             var c = controllers[i];
             if (c == null) continue;
 
-            if (i == holderIndex) c.PlayHold(_currentType, _currentState);
-            else c.PlayIdle(_currentType, _currentState);
+            if (i == holderIndex)
+                c.PlayHold(_currentType, _currentState);
+            else
+                c.PlayIdle(_currentType, _currentState);
         }
     }
 
@@ -101,12 +99,10 @@ public class CharacterAnimationBridge : MonoBehaviour
     {
         _currentState = newState;
 
-        for (int i = 0; i < controllers.Length; i++)
+        foreach (var c in controllers)
         {
-            var c = controllers[i];
             if (c == null) continue;
 
-            // conserve la phase courante, mais met à jour l'état
             switch (c.CurrentPhase)
             {
                 case AnimPhase.Idle: c.PlayIdle(_currentType, newState); break;
@@ -118,8 +114,7 @@ public class CharacterAnimationBridge : MonoBehaviour
 
     private bool IsValidHolder()
     {
-        return controllers != null &&
-               _currentHolder >= 0 &&
+        return _currentHolder >= 0 &&
                _currentHolder < controllers.Length &&
                controllers[_currentHolder] != null;
     }
