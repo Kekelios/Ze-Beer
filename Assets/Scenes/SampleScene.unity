@@ -2101,7 +2101,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 55, y: -170}
+  m_AnchoredPosition: {x: -125, y: -170}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1163752455
@@ -2121,7 +2121,7 @@ MonoBehaviour:
   animByBottle:
     cola:
       freshIdleFrames:
-      - {fileID: 21300000, guid: cbe6649cf8dad9545b68d3aafb0ed78c, type: 3}
+      - {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
       freshHoldFrames: []
       freshShakeFrames:
       - {fileID: 21300000, guid: cbe6649cf8dad9545b68d3aafb0ed78c, type: 3}
@@ -2129,7 +2129,7 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 0ba55b04757b0dc478d54483655069c7, type: 3}
       - {fileID: 21300000, guid: 1dd132f2f84ffc3419ddbcc90d312e95, type: 3}
       usedIdleFrames:
-      - {fileID: 21300000, guid: cbe6649cf8dad9545b68d3aafb0ed78c, type: 3}
+      - {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
       usedHoldFrames: []
       usedShakeFrames:
       - {fileID: 21300000, guid: cbe6649cf8dad9545b68d3aafb0ed78c, type: 3}
@@ -2137,7 +2137,7 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 0ba55b04757b0dc478d54483655069c7, type: 3}
       - {fileID: 21300000, guid: 1dd132f2f84ffc3419ddbcc90d312e95, type: 3}
       crackIdleFrames:
-      - {fileID: 21300000, guid: cbe6649cf8dad9545b68d3aafb0ed78c, type: 3}
+      - {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
       crackHoldFrames: []
       crackShakeFrames:
       - {fileID: 21300000, guid: cbe6649cf8dad9545b68d3aafb0ed78c, type: 3}
@@ -2194,7 +2194,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cbe6649cf8dad9545b68d3aafb0ed78c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2845,6 +2845,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1686431416}
   m_CullTransparentMesh: 1
+--- !u!1 &1717265200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1717265201}
+  - component: {fileID: 1717265203}
+  - component: {fileID: 1717265202}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1717265201
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1717265200}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -4.4}
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1800894394}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 865, y: 460}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1717265202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1717265200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: a4d354a81985b03408ba7d8a67f95aa3, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1717265203
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1717265200}
+  m_CullTransparentMesh: 1
 --- !u!1 &1800894393
 GameObject:
   m_ObjectHideFlags: 0
@@ -2877,6 +2952,7 @@ RectTransform:
   m_Children:
   - {fileID: 219476569}
   - {fileID: 1221567259}
+  - {fileID: 1717265201}
   - {fileID: 1355897466}
   - {fileID: 1903653195}
   - {fileID: 476866378}
@@ -3215,8 +3291,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3570,16 +3646,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2104515588}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.08193856, w: 0.9966374}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 18.6, y: 18.6, z: 18.6}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1423652517}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -9.4}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 495, y: -220}
+  m_AnchoredPosition: {x: 507, y: -338}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2104515590
@@ -3595,18 +3671,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Character2DAnimController
   spriteRenderer: {fileID: 0}
-  spriteImage: {fileID: 0}
+  spriteImage: {fileID: 2104515591}
   animByBottle:
     cola:
-      freshIdleFrames: []
+      freshIdleFrames:
+      - {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
       freshHoldFrames: []
-      freshShakeFrames: []
-      usedIdleFrames: []
+      freshShakeFrames:
+      - {fileID: 21300000, guid: bd567e9e8f96d5244be39f74658b4828, type: 3}
+      - {fileID: 21300000, guid: 18521f3bae1787e48ac5e176fdab5540, type: 3}
+      - {fileID: 21300000, guid: 822b82cbfc6b4c6429db109f568c0d17, type: 3}
+      - {fileID: 21300000, guid: 6b6b13e346295824699d3bb3c33f7862, type: 3}
+      - {fileID: 21300000, guid: 65a1b54f0565cfb4a9fa47967c1a4034, type: 3}
+      - {fileID: 21300000, guid: 62c8a12feb2159a47afa8483a1dfc238, type: 3}
+      - {fileID: 21300000, guid: 59ed0e58c527971459e5cb7992b46eca, type: 3}
+      usedIdleFrames:
+      - {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
       usedHoldFrames: []
-      usedShakeFrames: []
-      crackIdleFrames: []
+      usedShakeFrames:
+      - {fileID: 21300000, guid: 7263cceb1153a464d961441105f14375, type: 3}
+      - {fileID: 21300000, guid: 18521f3bae1787e48ac5e176fdab5540, type: 3}
+      - {fileID: 21300000, guid: 822b82cbfc6b4c6429db109f568c0d17, type: 3}
+      - {fileID: 21300000, guid: 6b6b13e346295824699d3bb3c33f7862, type: 3}
+      - {fileID: 21300000, guid: 65a1b54f0565cfb4a9fa47967c1a4034, type: 3}
+      - {fileID: 21300000, guid: 62c8a12feb2159a47afa8483a1dfc238, type: 3}
+      - {fileID: 21300000, guid: 59ed0e58c527971459e5cb7992b46eca, type: 3}
+      crackIdleFrames:
+      - {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
       crackHoldFrames: []
-      crackShakeFrames: []
+      crackShakeFrames:
+      - {fileID: 21300000, guid: 91094889f7169d047a06162676876e9f, type: 3}
+      - {fileID: 21300000, guid: 18521f3bae1787e48ac5e176fdab5540, type: 3}
+      - {fileID: 21300000, guid: 822b82cbfc6b4c6429db109f568c0d17, type: 3}
+      - {fileID: 21300000, guid: 6b6b13e346295824699d3bb3c33f7862, type: 3}
+      - {fileID: 21300000, guid: 65a1b54f0565cfb4a9fa47967c1a4034, type: 3}
+      - {fileID: 21300000, guid: 62c8a12feb2159a47afa8483a1dfc238, type: 3}
+      - {fileID: 21300000, guid: 59ed0e58c527971459e5cb7992b46eca, type: 3}
       fpsIdle: 8
       fpsHold: 8
       fpsShake: 12
@@ -3657,7 +3757,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

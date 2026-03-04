@@ -2094,14 +2094,14 @@ RectTransform:
   m_GameObject: {fileID: 1163752453}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 9, y: 9, z: 9}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1423652517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -485}
+  m_AnchoredPosition: {x: -125, y: -170}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1163752455
@@ -2117,18 +2117,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Character2DAnimController
   spriteRenderer: {fileID: 0}
-  spriteImage: {fileID: 0}
+  spriteImage: {fileID: 1163752456}
   animByBottle:
     cola:
-      freshIdleFrames: []
+      freshIdleFrames:
+      - {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
       freshHoldFrames: []
-      freshShakeFrames: []
-      usedIdleFrames: []
+      freshShakeFrames:
+      - {fileID: 21300000, guid: 11faaaacfa3d1ad4eb1aa5827a300bcf, type: 3}
+      - {fileID: 21300000, guid: 10c4f58bef9453245965ff41c1d32c4f, type: 3}
+      - {fileID: 21300000, guid: 73eaffc3f6b0a154ba0ef26eb1838826, type: 3}
+      - {fileID: 21300000, guid: 9bc8688056409a8498df5d1628d49160, type: 3}
+      - {fileID: 21300000, guid: 87907af726c774147b78578988779337, type: 3}
+      usedIdleFrames:
+      - {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
       usedHoldFrames: []
-      usedShakeFrames: []
-      crackIdleFrames: []
+      usedShakeFrames:
+      - {fileID: 21300000, guid: 11faaaacfa3d1ad4eb1aa5827a300bcf, type: 3}
+      - {fileID: 21300000, guid: 10c4f58bef9453245965ff41c1d32c4f, type: 3}
+      - {fileID: 21300000, guid: 73eaffc3f6b0a154ba0ef26eb1838826, type: 3}
+      - {fileID: 21300000, guid: 9bc8688056409a8498df5d1628d49160, type: 3}
+      - {fileID: 21300000, guid: 87907af726c774147b78578988779337, type: 3}
+      crackIdleFrames:
+      - {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
       crackHoldFrames: []
-      crackShakeFrames: []
+      crackShakeFrames:
+      - {fileID: 21300000, guid: 11faaaacfa3d1ad4eb1aa5827a300bcf, type: 3}
+      - {fileID: 21300000, guid: 10c4f58bef9453245965ff41c1d32c4f, type: 3}
+      - {fileID: 21300000, guid: 73eaffc3f6b0a154ba0ef26eb1838826, type: 3}
+      - {fileID: 21300000, guid: 9bc8688056409a8498df5d1628d49160, type: 3}
+      - {fileID: 21300000, guid: 87907af726c774147b78578988779337, type: 3}
       fpsIdle: 8
       fpsHold: 8
       fpsShake: 12
@@ -2179,7 +2197,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 1f8818b45bb86054698773351f7ab6fa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2593,10 +2611,10 @@ RectTransform:
   m_Children:
   - {fileID: 1800894394}
   - {fileID: 1884731158}
-  - {fileID: 1163752454}
   - {fileID: 1826279145}
   - {fileID: 2104515589}
   - {fileID: 2104841870}
+  - {fileID: 1163752454}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2693,6 +2711,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 476866378}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1647596889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1647596890}
+  - component: {fileID: 1647596892}
+  - component: {fileID: 1647596891}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1647596890
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647596889}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -4.4}
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1800894394}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 865, y: 460}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1647596891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647596889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: a4d354a81985b03408ba7d8a67f95aa3, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1647596892
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647596889}
+  m_CullTransparentMesh: 1
 --- !u!1 &1686431416
 GameObject:
   m_ObjectHideFlags: 0
@@ -2865,6 +2958,7 @@ RectTransform:
   - {fileID: 219476569}
   - {fileID: 1221567259}
   - {fileID: 1355897466}
+  - {fileID: 1647596890}
   - {fileID: 1903653195}
   - {fileID: 476866378}
   - {fileID: 468185503}
@@ -3202,8 +3296,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3557,16 +3651,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2104515588}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.08243665, w: 0.99659634}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 18.599998, y: 18.599998, z: 18.599998}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1423652517}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -9.457}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 495, y: -220}
+  m_AnchoredPosition: {x: 507, y: -338}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2104515590
@@ -3582,18 +3676,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Character2DAnimController
   spriteRenderer: {fileID: 0}
-  spriteImage: {fileID: 0}
+  spriteImage: {fileID: 2104515591}
   animByBottle:
     cola:
-      freshIdleFrames: []
+      freshIdleFrames:
+      - {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
       freshHoldFrames: []
-      freshShakeFrames: []
-      usedIdleFrames: []
+      freshShakeFrames:
+      - {fileID: 21300000, guid: 5ce0df050a9da2d4ba7453472a203b4f, type: 3}
+      - {fileID: 21300000, guid: 1491063b11edb174db646b3ee8308419, type: 3}
+      - {fileID: 21300000, guid: fee4015253a86fe43b126c8468b02f7f, type: 3}
+      - {fileID: 21300000, guid: 48f5bef9e268fe84bad121ca491bb255, type: 3}
+      - {fileID: 21300000, guid: bfbcdbec6088e6d4daf5cf7252f30c4d, type: 3}
+      - {fileID: 21300000, guid: ff1ad4ca2d474754b9949c267d7330fb, type: 3}
+      - {fileID: 21300000, guid: 453ca4807c57373449065e0f3a1ea7f7, type: 3}
+      usedIdleFrames:
+      - {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
       usedHoldFrames: []
-      usedShakeFrames: []
-      crackIdleFrames: []
+      usedShakeFrames:
+      - {fileID: 21300000, guid: 5ce0df050a9da2d4ba7453472a203b4f, type: 3}
+      - {fileID: 21300000, guid: 1491063b11edb174db646b3ee8308419, type: 3}
+      - {fileID: 21300000, guid: fee4015253a86fe43b126c8468b02f7f, type: 3}
+      - {fileID: 21300000, guid: 48f5bef9e268fe84bad121ca491bb255, type: 3}
+      - {fileID: 21300000, guid: bfbcdbec6088e6d4daf5cf7252f30c4d, type: 3}
+      - {fileID: 21300000, guid: ff1ad4ca2d474754b9949c267d7330fb, type: 3}
+      - {fileID: 21300000, guid: 453ca4807c57373449065e0f3a1ea7f7, type: 3}
+      crackIdleFrames:
+      - {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
       crackHoldFrames: []
-      crackShakeFrames: []
+      crackShakeFrames:
+      - {fileID: 21300000, guid: 5ce0df050a9da2d4ba7453472a203b4f, type: 3}
+      - {fileID: 21300000, guid: 1491063b11edb174db646b3ee8308419, type: 3}
+      - {fileID: 21300000, guid: fee4015253a86fe43b126c8468b02f7f, type: 3}
+      - {fileID: 21300000, guid: 48f5bef9e268fe84bad121ca491bb255, type: 3}
+      - {fileID: 21300000, guid: bfbcdbec6088e6d4daf5cf7252f30c4d, type: 3}
+      - {fileID: 21300000, guid: ff1ad4ca2d474754b9949c267d7330fb, type: 3}
+      - {fileID: 21300000, guid: 453ca4807c57373449065e0f3a1ea7f7, type: 3}
       fpsIdle: 8
       fpsHold: 8
       fpsShake: 12
@@ -3644,7 +3762,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 6b98efef33659be43aab1ad6c0ffa3f0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3720,17 +3838,23 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 0da5b66b89e8bbe45b5f98a3989006ae, type: 3}
       freshHoldFrames: []
       freshShakeFrames:
-      - {fileID: 21300000, guid: 6c25c36b4afa45d4b93683c783b95501, type: 3}
-      - {fileID: 21300000, guid: 1d52ba8c032cf084ca2cd55c03fb33e1, type: 3}
-      - {fileID: 21300000, guid: 7a82fc5353f31a341acf4a69a18a9922, type: 3}
+      - {fileID: 21300000, guid: 2f9fe97d97c34c74e85d566dc7db69ac, type: 3}
+      - {fileID: 21300000, guid: 68b2ce8177f662e4b9a18e84e3d52c54, type: 3}
+      - {fileID: 21300000, guid: 68b2ce8177f662e4b9a18e84e3d52c54, type: 3}
       usedIdleFrames:
       - {fileID: 21300000, guid: 0da5b66b89e8bbe45b5f98a3989006ae, type: 3}
       usedHoldFrames: []
-      usedShakeFrames: []
+      usedShakeFrames:
+      - {fileID: 21300000, guid: df9052515fa89ae46ad96665015dfcb2, type: 3}
+      - {fileID: 21300000, guid: 68b2ce8177f662e4b9a18e84e3d52c54, type: 3}
+      - {fileID: 21300000, guid: 137b98da3a6d2fd48b79e18320af5f22, type: 3}
       crackIdleFrames:
       - {fileID: 21300000, guid: 0da5b66b89e8bbe45b5f98a3989006ae, type: 3}
       crackHoldFrames: []
-      crackShakeFrames: []
+      crackShakeFrames:
+      - {fileID: 21300000, guid: 21d0a3bbf4150564b868049569b50b20, type: 3}
+      - {fileID: 21300000, guid: 68b2ce8177f662e4b9a18e84e3d52c54, type: 3}
+      - {fileID: 21300000, guid: 137b98da3a6d2fd48b79e18320af5f22, type: 3}
       fpsIdle: 8
       fpsHold: 8
       fpsShake: 12
