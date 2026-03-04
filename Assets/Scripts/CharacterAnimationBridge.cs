@@ -6,16 +6,15 @@ public class CharacterAnimationBridge : MonoBehaviour
     [SerializeField] private Character2DAnimController[] controllers;
 
     private BottleState _currentState;
-    private BottleType _currentType;
-    private int _currentHolder = -1;
-
+    private BottleType  _currentType;
+    private int         _currentHolder = -1;
     private BottleModel _subscribedBottle;
 
     private void Start()
     {
         if (TurnManager.Instance != null)
         {
-            TurnManager.Instance.OnTurnStarted += HandleTurnStarted;
+            TurnManager.Instance.OnTurnStarted    += HandleTurnStarted;
             TurnManager.Instance.OnShakePerformed += HandleShakeStarted;
             TurnManager.Instance.OnShakeCompleted += HandleShakeCompleted;
         }
@@ -34,7 +33,7 @@ public class CharacterAnimationBridge : MonoBehaviour
     {
         if (TurnManager.Instance != null)
         {
-            TurnManager.Instance.OnTurnStarted -= HandleTurnStarted;
+            TurnManager.Instance.OnTurnStarted    -= HandleTurnStarted;
             TurnManager.Instance.OnShakePerformed -= HandleShakeStarted;
             TurnManager.Instance.OnShakeCompleted -= HandleShakeCompleted;
         }
@@ -49,6 +48,16 @@ public class CharacterAnimationBridge : MonoBehaviour
 
     private void HandlePhaseChanged(GamePhase phase)
     {
+        if (phase == GamePhase.GameOver)
+        {
+            // Stoppe toutes les animations immédiatement
+            foreach (var c in controllers)
+                c?.StopAnimation();
+
+            UnsubscribeBottle();
+            return;
+        }
+
         if (phase != GamePhase.Playing) return;
 
         UnsubscribeBottle();
@@ -64,7 +73,7 @@ public class CharacterAnimationBridge : MonoBehaviour
         _subscribedBottle.OnStateChanged += HandleBottleStateChanged;
 
         _currentState = _subscribedBottle.State;
-        _currentType = _subscribedBottle.Data.bottleType;
+        _currentType  = _subscribedBottle.Data.bottleType;
 
         foreach (var c in controllers)
             c?.PlayIdle(_currentType, _currentState);
@@ -86,7 +95,7 @@ public class CharacterAnimationBridge : MonoBehaviour
             if (c == null) continue;
 
             if (i == holderIndex) c.PlayHold(_currentType, _currentState);
-            else c.PlayIdle(_currentType, _currentState);
+            else                  c.PlayIdle(_currentType, _currentState);
         }
     }
 
@@ -97,7 +106,7 @@ public class CharacterAnimationBridge : MonoBehaviour
         if (!IsValidHolder()) return;
         controllers[_currentHolder].PlayShake(_currentType, _currentState);
 
-        bool isFemale = (_currentHolder == 1); // AI1 = féminin, adapte si besoin
+        bool isFemale = (_currentHolder == 1);
         SoundManager.Instance?.PlayReaction(isFemale);
     }
 
@@ -121,8 +130,8 @@ public class CharacterAnimationBridge : MonoBehaviour
 
             switch (c.CurrentPhase)
             {
-                case AnimPhase.Idle: c.PlayIdle(_currentType, newState); break;
-                case AnimPhase.Hold: c.PlayHold(_currentType, newState); break;
+                case AnimPhase.Idle:  c.PlayIdle (_currentType, newState); break;
+                case AnimPhase.Hold:  c.PlayHold (_currentType, newState); break;
                 case AnimPhase.Shake: c.PlayShake(_currentType, newState); break;
             }
         }
@@ -130,19 +139,15 @@ public class CharacterAnimationBridge : MonoBehaviour
 
     // ── Helpers ───────────────────────────────────────────────────────
 
-    private bool IsValidHolder()
-    {
-        return _currentHolder >= 0 &&
-               _currentHolder < controllers.Length &&
-               controllers[_currentHolder] != null;
-    }
+    private bool IsValidHolder() =>
+        _currentHolder >= 0 &&
+        _currentHolder < controllers.Length &&
+        controllers[_currentHolder] != null;
 
     private void UnsubscribeBottle()
     {
-        if (_subscribedBottle != null)
-        {
-            _subscribedBottle.OnStateChanged -= HandleBottleStateChanged;
-            _subscribedBottle = null;
-        }
+        if (_subscribedBottle == null) return;
+        _subscribedBottle.OnStateChanged -= HandleBottleStateChanged;
+        _subscribedBottle = null;
     }
 }

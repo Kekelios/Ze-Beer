@@ -15,22 +15,35 @@ public class Character2DAnimController : MonoBehaviour
     [Tooltip("Si true, les flipbooks ignorent Time.timeScale (recommandé si ton jeu change le timeScale).")]
     [SerializeField] private bool useRealtime = true;
 
-    public BottleState CurrentState { get; private set; }
-    public AnimPhase CurrentPhase { get; private set; }
-    public BottleType CurrentBottleType { get; private set; }
+    public BottleState  CurrentState      { get; private set; }
+    public AnimPhase    CurrentPhase      { get; private set; }
+    public BottleType   CurrentBottleType { get; private set; }
 
     private Coroutine _flipbook;
 
-    // API
-    public void PlayIdle(BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Idle);
-    public void PlayHold(BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Hold);
+    // ── API ───────────────────────────────────────────────────────────
+
+    public void PlayIdle (BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Idle);
+    public void PlayHold (BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Hold);
     public void PlayShake(BottleType bottleType, BottleState state) => Play(bottleType, state, AnimPhase.Shake);
+
+    /// <summary>Stoppe le flipbook immédiatement et fige le sprite sur la frame courante.</summary>
+    public void StopAnimation()
+    {
+        if (_flipbook != null)
+        {
+            StopCoroutine(_flipbook);
+            _flipbook = null;
+        }
+    }
+
+    // ── Privé ─────────────────────────────────────────────────────────
 
     private void Play(BottleType bottleType, BottleState state, AnimPhase phase)
     {
         CurrentBottleType = bottleType;
-        CurrentState = state;
-        CurrentPhase = phase;
+        CurrentState      = state;
+        CurrentPhase      = phase;
 
         if (_flipbook != null) StopCoroutine(_flipbook);
         _flipbook = StartCoroutine(FlipbookLoop(bottleType, state, phase));
@@ -57,9 +70,9 @@ public class Character2DAnimController : MonoBehaviour
             yield break;
         }
 
-        float fps = set.GetFps(phase);
+        float fps      = set.GetFps(phase);
         float interval = 1f / Mathf.Max(1f, fps);
-        int index = 0;
+        int   index    = 0;
 
         while (true)
         {
@@ -67,13 +80,13 @@ public class Character2DAnimController : MonoBehaviour
             index = (index + 1) % frames.Length;
 
             if (useRealtime) yield return new WaitForSecondsRealtime(interval);
-            else yield return new WaitForSeconds(interval);
+            else             yield return new WaitForSeconds(interval);
         }
     }
 
     private void SetSprite(Sprite sprite)
     {
-        if (spriteRenderer != null) spriteRenderer.sprite = sprite;
-        else if (spriteImage != null) spriteImage.sprite = sprite;
+        if      (spriteRenderer != null) spriteRenderer.sprite = sprite;
+        else if (spriteImage    != null) spriteImage.sprite    = sprite;
     }
 }

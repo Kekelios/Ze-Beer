@@ -92,7 +92,7 @@ public class UIController : MonoBehaviour
         }
 
         if (phase == GamePhase.GameOver)
-            gameOverLabel.text = GameManager.Instance.PlayerWon ? "VICTOIRE !" : "DÉFAITE...";
+            gameOverLabel.text = GameManager.Instance.PlayerWon ? "WINNERS !" : "LOSER...";
     }
 
     // ── Bottle visual ─────────────────────────────────────────────────
